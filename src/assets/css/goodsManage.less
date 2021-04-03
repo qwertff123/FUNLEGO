@@ -1,0 +1,424 @@
+.goods-manage {
+    position: relative;
+    .table-filter {
+        width: 100%;
+        background-color: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        label {
+            display: inline-block;
+            flex: 1 1 33%;
+            vertical-align: middle;
+        }
+
+        input {
+            width: 150px;
+            height: 30px;
+            margin: 0 10px;
+            border-radius: 5px;
+            border: 1px solid rgb(102, 94, 255);
+            padding: 10px;
+            box-sizing: border-box;
+            vertical-align: middle;
+        }
+
+        .operation {
+            margin-left: auto;
+
+            &>button {
+                width: 60px;
+                height: 30px;
+                padding: 5px 10px;
+                box-sizing: border-box;
+                border-radius: 7px;
+                margin: 0 10px;
+                cursor: pointer;
+
+                &:active {
+                    opacity: 0.8;
+                }
+            }
+
+            .search-btn {
+                background-color: rgb(101, 94, 255);
+                color: white;
+            }
+
+            .reset-btn {
+                border: 1px solid rgb(120, 132, 158);
+                color: rgb(120, 132, 158);
+                background-color: transparent;
+            }
+        }
+    }
+
+    .info-box {
+        margin-top: 20px;
+        background-color: white;
+        border-radius: 15px;
+        padding: 20px 25px;
+        box-sizing: border-box;
+
+        /* 返回按钮的样式 */
+        .back {
+            width: 50px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background-color: rgb(88, 115, 255);
+            color: white;
+            cursor: pointer;
+
+            &:active {
+                opacity: .6;
+            }
+        }
+
+        .table {
+            height: 450px;
+            margin-bottom: 20px;
+            
+            .top{
+                display: flex;
+                height:50px;
+                justify-content: space-between;
+                .title{
+                    font-size:20px;
+                }
+                .right{
+                    i{
+                        display: inline-block;
+                        line-height: 30px;
+                        text-align: center;
+                        cursor: pointer;
+                        font-size:20px;
+                        width:30px;
+                        height:30px;
+                        &.add-goods::after{
+                            content:"\e65d";
+                        }
+                    }
+                }
+            }
+            .operate{
+                display:flex;
+                justify-content: center;
+                .qw-button{
+                    height:30px;
+                    margin:0 5px;
+                    width:60px;
+                    &.remove-btn{
+                        background-color:rgb(229,79,80);
+                    }
+                }
+            }
+        }
+
+        .info {
+            position:absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            padding: 25px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+
+            .card {
+                flex: 1 1 auto;
+                border: 1px solid rgba(102, 94, 255, .6);
+                box-shadow: 0 0 8px 1px rgba(101, 94, 255, .6);
+                border-radius: 15px;
+                padding: 20px;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+
+                .id {
+                    align-self: flex-start;
+                    height: 30px;
+                    line-height: 30px;
+                    width: auto;
+                    margin-bottom: 10px;
+                    font-size: 20px;
+                    background-color: rgb(206, 210, 221);
+                    border-radius: 5px;
+                    padding: 0 20px;
+                    font-weight: bolder;
+                    color: white;
+                }
+
+                .top {
+                    display: flex;
+                    margin-bottom: 50px;
+                    height: 200px;
+
+                    .img {
+                        flex: 0 0 auto;
+                        width: 200px;
+                        height: 200px;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+
+                    .base-info {
+                        flex: 1 1 auto;
+                        margin-left: 50px;
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: space-between;
+
+                        .item {
+                            flex: 0 0 45%;
+                            height: 35px;
+                            display: flex;
+                            align-items: center;
+
+                            // margin-right:15px;
+                            &.long {
+                                flex: 1 1 100%;
+                            }
+
+                            &.status {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                flex: 0 0 100%;
+
+                                .content {
+                                    background-color: transparent;
+                                    text-align: center;
+
+                                    .badge {
+                                        width: 200px;
+                                        padding: 5px 0;
+                                        font-size: 16px;
+                                        font-weight: bolder;
+                                    }
+                                }
+                            }
+
+                            .title {
+                                display: inline-block;
+                                width: 80px;
+                                text-align: center;
+                                background-color: rgb(224, 223, 255);
+                                // color:rgb(68,79,99);
+                                color: rgb(120, 132, 158);
+                                padding: 5px 15px;
+                                box-sizing: border-box;
+                                font-weight: bolder;
+                                border-top-left-radius: 15px;
+                                border-bottom-left-radius: 15px;
+                            }
+
+                            .content {
+                                background-color: rgb(248, 249, 254);
+                                padding: 5px 15px;
+                                flex: 1 1 auto;
+                                border-top-right-radius: 15px;
+                                border-bottom-right-radius: 15px;
+                                font-weight: 700;
+
+                                .badge {
+                                    display: inline-block;
+                                    font-style: normal;
+                                    font-style: normal;
+                                    padding: 2px 5px;
+                                    box-sizing: border-box;
+                                    font-size: 12px;
+                                    border-radius: 5px;
+                                    margin-right: 10px;
+                                    background-color: rgb(255, 144, 88);
+                                    color: white;
+                                    font-weight: 400;
+
+                                    &.success {
+                                        background-color: rgb(34, 239, 209);
+                                    }
+
+                                    &.error {
+                                        background-color: rgb(229, 79, 80);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .sale-info {
+                    flex: 1 1 auto;
+                    border: 1px solid black;
+                }
+
+            }
+        }
+
+        .edit {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            background-color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            .center{
+                text-align: center;
+                padding-left:0;
+            }
+            .card {
+                flex: 1 1 auto;
+                width: 100%;
+                border: 1px solid rgba(101, 94, 255, .6);
+                box-shadow: 0 0 8px 1px rgba(101, 94, 255, .6);
+                border-radius: 15px;
+                margin: 0 auto;
+                padding: 20px;
+                box-sizing: border-box;
+
+                .id {
+                    display: inline-block;
+                    height: 30px;
+                    line-height: 30px;
+                    margin-bottom: 10px;
+                    font-size: 20px;
+                    background-color: rgb(206, 210, 221);
+                    border-radius: 5px;
+                    padding: 0 20px;
+                    font-weight: bolder;
+                    color: white;
+                }
+
+                .form {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+
+                    .form-left {
+                        flex: 0 0 48%;
+
+                    }
+
+                    .form-right {
+                        flex: 0 0 48%;
+                    }
+
+                    .item {
+                        display: flex;
+                        margin: 15px 0;
+                        height: 35px;
+                        justify-content: space-between;
+
+                        .left,
+                        .right {
+                            flex: 0 0 45%;
+                        }
+
+                        .switch {
+                            margin-left: 20px;
+                            display: flex;
+                            align-items: center;
+                        }
+                    }
+
+                    .tags-area {
+                        margin: 15px 0;
+                        height: auto;
+                    }
+
+                    .image-area {
+                        display: flex;
+                        height: 250px;
+                        flex-wrap: wrap;
+                        border: 1px solid black;
+
+                        .carousel {
+                            height: 180px;
+                            width: 100%;
+                            border: 1px solid black;
+                            display: flex;
+
+                            .carousel-area {
+                                height: 100%;
+                                width: 200px;
+
+                                .carousel-item {
+                                    width: 300px;
+                                    height: 100%;
+                                }
+
+                                img {
+                                    width: 100%;
+                                    height: 100%;
+                                }
+                            }
+
+                            .control {
+                                flex: 1 1 auto;
+                            }
+                        }
+
+                        .bottom {
+                            margin: 0 10px;
+                            display: flex;
+                            height: 30px;
+                            width: 100%;
+                            justify-content: center;
+                            .add,
+                            .remove {
+                                margin: 0 10px;
+                                width:60px;
+                            }
+
+                            .remove {
+                                background-color: rgb(229, 79, 80);
+                                color: white;
+                            }
+                        }
+
+                    }
+
+                    .operate {
+                        position:absolute;
+                        bottom:40px;
+                        left:0;
+                        right:0;
+                        display: flex;
+                        justify-content: space-evenly;
+
+                        .btn {
+                            width: 100px;
+                            height: 30px;
+
+                            text &.submit {
+                                background-color: rgb(102, 94, 255);
+                            }
+
+                            &.reset {
+                                background-color: transparent;
+                                color: #78849e;
+                                border: 1px solid #78849e;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
