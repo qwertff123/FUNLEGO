@@ -2,77 +2,55 @@
   <div id="aside">
     <h1>qwertff</h1>
     <div class="aside-list">
-      <template v-for="item in menuList">
-        <!-- 没有下拉列表 -->
-        <router-link
-          :to="item.path"
-          custom
-          v-slot="{ navigate, isActive }"
-          :key="item.id"
-          v-if="!item.children"
-        >
-          <div
-            class="item"
-            :class="{
-              selected: (!curSelect && isActive) || curSelect == item.id,
-            }"
-            @click="
-              selectMenu(item.id);
-              navigate($event);
-            "
+      <qw-menu default-active="1">
+        <template v-for="(item, index) in $store.state.menuRoutes">
+          <router-link
+            :to="{ name: item.name }"
+            custom
+            v-slot="{ navigate }"
+            :key="item.name"
+            v-if="!item.children"
           >
-            <div class="title">
-              <i class="iconfont shop left-icon"></i>{{ item.title }}
-            </div>
-          </div>
-        </router-link>
-        <!-- 具有下拉列表 -->
-        <router-link
-          :to="item.path"
-          :key="item.id"
-          custom
-          v-slot="{ navigate }"
-          v-else
-        >
-          <div
-            class="item drap"
-            :class="{
-              selected: curSelect && curSelect.split('-')[0] == item.id,
-            }"
-            @click="
-              selectMenu(item.id);
-              navigate($event);
-            "
+            <qw-menu-item :index="index + 1" @click.native="navigate">
+              <i class="iconfont" :class="item.meta.icon"></i
+              >{{ item.meta.title }}
+            </qw-menu-item>
+          </router-link>
+          <router-link
+            v-else
+            :to="{ name: item.name }"
+            custom
+            v-slot="{ navigate }"
+            :key="item.name"
           >
-            <div class="title">
-              <i class="iconfont shop left-icon"></i>{{ item.title }}
-              <i class="iconfont drap-arrow ml-auto"></i>
-            </div>
-            <transition name="drap" @before-enter="down" @before-leave="up">
-              <div
-                class="drap-list"
-                v-show="curSelect && curSelect.split('-')[0] == item.id"
+            <qw-menu-item-group
+              @click.native="navigate"
+              :index="index + 1"
+              :default-active="index + 1 + '-' + 1"
+            >
+              <template #title>
+                <i class="iconfont" :class="item.meta.icon"></i
+                >{{ item.meta.title }}
+              </template>
+              <router-link
+                :to="{ name: subItem.name }"
+                v-for="(subItem, subIndex) in item.children"
+                :key="subItem.name"
+                custom
+                v-slot="{ navigate }"
               >
-                <router-link
-                  :to="item.path"
-                  v-for="item in item.children"
-                  :key="item.id"
-                  custom
-                  v-slot="{ navigate,isActive }"
+                <qw-menu-item
+                  :index="index + 1 + '-' + (subIndex + 1)"
+                  @click.native="navigate"
                 >
-                  <div
-                    class="drap-item"
-                    :class="{ selected: isActive || curSelect == item.id }"
-                    @click.stop="selectMenu(item.id);navigate($event)"
-                  >
-                    {{ item.title }}
-                  </div>
-                </router-link>
-              </div>
-            </transition>
-          </div>
-        </router-link>
-      </template>
+                  <i class="iconfont" :class="subItem.meta.icon"></i
+                  >{{ subItem.meta.title }}
+                </qw-menu-item>
+              </router-link>
+            </qw-menu-item-group>
+          </router-link>
+        </template>
+      </qw-menu>
     </div>
     <div class="bottom">
       <i class="iconfont menu-to-left"></i>
@@ -82,76 +60,20 @@
 <script>
 import Slide from "../slide";
 const slide = new Slide(500);
+
+import menuComponent from "@/components/menuComponent";
 export default {
+  components: {
+    ...menuComponent,
+  },
   data() {
     return {
       //记录当前的菜单栏的id
       curSelect: null,
-      menuList: [
-        {
-          path: "/goodsManage",
-          title: "商品管理",
-        },
-        {
-          path: "/orderManage",
-          title: "订单管理",
-        },
-        {
-          path: "/adManage",
-          title: "广告banner位",
-        },
-        {
-          path: "/userManage",
-          title: "用户管理",
-          children: [
-            {
-              path: "/userManger/merchant",
-              title: "商家",
-            },
-            {
-              path: "/userManger/super",
-              title: "超级管理员",
-            },
-            {
-              path: "/userManger/common",
-              title: "普通用户",
-            },
-            {
-              path: "/userManger/vip",
-              title: "vip用户",
-            },
-          ],
-        },
-        {
-          path: "/recommendManage",
-          title: "推荐商品管理",
-        },
-      ],
     };
   },
   /* eslint-disable no-unused-vars */
   methods: {
-    getMenu() {
-      return this.menuList.map((val, index) => {
-        let children = val.children;
-        if (children) {
-          children = val.children.map((val, childrenIndex) => {
-            return {
-              title: val.title,
-              path: val.path,
-              id: index + "-" + childrenIndex,
-            };
-          });
-        }
-        return {
-          title: val.title,
-          path: val.path,
-          id: index,
-          children,
-        };
-      });
-    },
-
     /**
      * 选中菜单标签所触发的回调函数
      * @param { Number } 菜单id
@@ -176,9 +98,6 @@ export default {
       slide.up(el);
     },
   },
-  mounted() {
-    this.menuList = this.getMenu();
-  },
 };
 </script>
 <style scoped lang="less">
@@ -188,6 +107,24 @@ export default {
 #aside {
   height: 100%;
 }
+
+i {
+  font-size:16px;
+  margin-right:10px;
+  &.goodsManage::after {
+    content: "\e619";
+  }
+  &.saleManage::after {
+    content: "\e61a";
+  }
+  &.saleStatistics::after {
+    content: "\e61d";
+  }
+  &.orderManage::after {
+    content: "\e634";
+  }
+}
+
 .aside-list {
   .item {
     width: 80%;
@@ -195,7 +132,7 @@ export default {
     margin-left: auto;
     margin-right: auto;
     cursor: pointer;
-    font-size:14px;
+    font-size: 14px;
 
     .title,
     &.drap .drap-item {
@@ -230,6 +167,7 @@ export default {
     &.selected .drap-arrow {
       transform: rotate(180deg);
     }
+
     &.drap {
       position: relative;
       .drap-item.selected {
