@@ -1,17 +1,26 @@
 <template>
-  <div class="qw-select content" :class="qwClass">
-    <input
-      type="text"
-      :value="displayValue"
-      readonly
-      :placeholder="displayPlaceholder"
-      @click="changeStatus"
-    />
-    <i
-      v-show="optionsInfo.length"
-      class="iconfont qw-icon-drap"
-      :class="{ dripping: isDrap }"
-    ></i>
+  <div
+    class="qw-select content"
+    :class="{ error: errorMsg, correct: errorMsg != null && !errorMsg }"
+  >
+    <div class="select" @click="changeStatus">
+      <input
+        type="text"
+        :value="displayValue"
+        readonly
+        :placeholder="displayPlaceholder"
+        ref="select"
+      />
+      <i
+        v-show="optionsInfo.length"
+        class="iconfont qw-icon-drap"
+        :class="{ dripping: isDrap }"
+      ></i>
+
+      <div class="error-msg">
+        {{ errorMsg }}
+      </div>
+    </div>
     <transition @before-enter="down" @before-leave="up">
       <div class="drap-list" v-show="isDrap">
         <slot></slot>
@@ -22,25 +31,35 @@
 
 <script>
 import Slide from "./slide";
+import { registerVertifyEvent } from "./utils";
 export default {
   model: {
     prop: "value",
     event: "change",
   },
-  props: ["label", "placeholder", "prop", "value", "qwClass", "watch"],
+  props: ["label", "placeholder", "prop", "value", "watch"],
   data() {
     return {
       isDrap: false,
       optionsInfo: [],
       slide: new Slide(300),
+      rules: null,
+      errorMsg: null,
+      changeEvent: new Event("change"),
+      blurEvent: new Event("blur"),
     };
   },
   watch: {
     watch() {
+      console.log("检测到某值得改变")
       requestAnimationFrame(() => {
         this.initoptionsInfo();
         this.$emit("change", "");
       });
+    },
+    value() {
+      //当值发生改变时触发change事件
+      this.$refs.select.dispatchEvent(this.changeEvent);
     },
   },
   computed: {
@@ -62,6 +81,16 @@ export default {
       return "无数据";
     },
   },
+  created() {
+    const totalRules = this.$formBus.rules;
+    for (const key in totalRules) {
+      if (key == this.prop) {
+        this.rules = totalRules[key];
+        break;
+      }
+    }
+  },
+
   mounted() {
     //当子组件触发点击事件时，会触发父组件的事件并向其传递选中的value值与展示值
     this.$on("selected", (value) => {
@@ -71,6 +100,41 @@ export default {
 
     this.initoptionsInfo();
 
+    //注册用于校验本表单的事件
+    this.rules &&
+      registerVertifyEvent({
+        instance: this,
+        el: this.$refs.select,
+        rules: this.rules,
+        success: (isArrow) => {
+          console.log(isArrow);
+          if (isArrow) {
+            this.errorMsg = "";
+          }
+        },
+        error: (msg) => {
+          this.errorMsg = msg;
+        },
+      });
+    this.$formBus.$on("submitVertify", (vertifyError) => {
+      const result = vertifyError
+        .filter((val) => {
+          return val.prop == this.prop;
+        })
+        .pop();
+      if (result) {
+        this.errorMsg = result.msg;
+      } else {
+        this.errorMsg = "";
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!this.$el.contains(e.target) && this.isDrap) {
+        this.isDrap = false;
+        this.$refs.select.dispatchEvent(this.blurEvent);
+      }
+    });
   },
   methods: {
     changeStatus() {
@@ -95,46 +159,63 @@ export default {
 };
 </script>
 <style scoped lang="less">
-.content {
+.qw-select {
   position: relative;
-
-  i.qw-icon-drap::after {
-    color: black;
-    position: absolute;
-    height: 16px;
-    width: 16px;
-    line-height: 16px;
-    margin-top: -8px;
-    top: 50%;
-    text-align: center;
-    right: 5px;
-
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    z-index: 0;
+  border: 1px solid #eee;
+  &.error {
+    border: 1px solid #f56c6c;
   }
-  i.dripping::after {
-    transform: rotateZ(-180deg);
+  &.correct {
+    border: 1px solid #50bc93;
   }
-
-  input {
-    width: 100%;
+  .select {
     height: 100%;
-    background-color: transparent;
-    cursor: pointer;
-    text-align: center;
+    input {
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+    i {
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      line-height: 20px;
+      text-align: center;
+      margin-top: -10px;
+      top: 50%;
+      right: 0;
+      text-align: center;
+      transition: all 0.3s;
+      &.qw-icon-drap::after {
+        display: block;
+        color: #c0c4cc;
+        font-size: 12px;
+        cursor: pointer;
+        transform: scale(0.8);
+      }
+
+      &.dripping {
+        transform: rotateZ(-180deg);
+      }
+    }
   }
+
   .drap-list {
     position: absolute;
     transform: translateY(3px);
-    border-radius: 10px;
     left: 0;
     right: 0;
+    background-color: white;
+    border: 1px solid #c0c4cc;
     text-align: center;
-    background-color: #eee;
     overflow: hidden;
     z-index: 100;
+    font-size: 13px;
   }
 }
 </style>

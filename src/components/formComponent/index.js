@@ -3,6 +3,21 @@ import "./index.less";
 //引入字体图标库
 import "./iconfont.css";
 
+import Vue from "vue";
+Vue.prototype.$formBus = new Vue({
+  data(){
+    return {
+      rules : {},
+      vertifyError : []
+    }
+  },
+  watch : {
+    vertifyError(){
+      this.$emit("submitVertify",this.vertifyError);
+    }
+  }
+});
+
 import qwForm from "./qwForm"
 import qwInput from "./qwInput";
 

@@ -1,64 +1,40 @@
 <template>
-  <div class="qw-button" :class="qwClass">
-    <input
-      class="file"
-      type="file"
-      v-if="type == 'file'"
-      @change="handleClick"
-    />
-    <button :type="type == 'submit' ? 'submit' : 'button'" @click="handleClick">
-      {{ label }}
-    </button>
-  </div>
+  <button
+    class="qw-submit"
+    :class="['color',qwClass]"
+    :type="type == 'submit' ? 'submit' : 'button'"
+    @click="$emit('click')"
+  >{{ label }}</button>
 </template>
 <script>
 export default {
-  props: ["type", "label", "qwClass", "eventConfig"],
-  methods: {
-    handleClick(e) {
-      if (this.eventConfig) {
-        e.stopPropagation();
-      } 
-      if (this.type == "file") {
-        this.$emit("change", e.target);
-      } else if(this.type == "button"){
-        e.preventDefault();
-        this.$emit("click");
-      }
-    },
-  },
+  props: ["color", "type", "label","qwClass"],
 };
 </script>
 <style scoped lang="less">
-.qw-button:not(.normal) {
+.qw-submit {
+  width: 100%;
+  height: 100%;
   border-radius: 5px;
   background-color: rgb(58, 205, 225);
   color: white;
-  font-size: 14px;
-  font-weight: bold;
-  position: relative;
-  overflow: hidden;
-}
-button {
-  color: inherit;
-  font-weight: inherit;
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 14px;
   cursor: pointer;
+  font-weight: bold;
+  &.submit {
+    background-color: rgb(102, 94, 255);
+  }
+
+  &.cancel {
+    border: 1px solid rgb(229, 79, 80);
+    color: rgb(229, 79, 80);
+    background-color: white;
+  }
   &:active {
     opacity: 0.8;
   }
-}
-input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0;
-  z-index: 100;
 }
 </style>

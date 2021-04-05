@@ -1,7 +1,7 @@
 <template>
   <div class="qw-tags-list content">
     <div class="top">
-      <input type="text" v-model="tag" class="input" :placeholder="placeholder" />
+      <input type="text" v-model="tag" :placeholder="placeholder" />
       <button type="button" class="tags-btn" @click="o_value = tag">添加</button>
     </div>
     <div class="tags-container">
@@ -36,10 +36,7 @@ export default {
         return this.value;
       },
       set(val) {
-        let value = this.value;
-        if(typeof value == "string"){
-          value = [];
-        }
+        const value = this.value;
         if(!val || value.includes(val)){
           return;
         }
@@ -57,13 +54,13 @@ export default {
   .top {
     display: flex;
     justify-content: space-between;
-    .input {
+    input {
       flex:1 1 auto;
       margin-right:30px;
-      border-radius: 10px;
       height: 30px;
       padding-left: 10px;
       font-size: 12px;
+      border:1px solid #eee;
     }
 
     .tags-btn {
@@ -75,6 +72,7 @@ export default {
       outline: none;
       border-radius: 10px;
       cursor: pointer;
+      transform: scale(.8);
     }
   }
 

@@ -4,15 +4,21 @@
     <div class="right">
       <div class="form">
         <p class="title">QWERTFF</p>
-        <qw-form class="normal" @submit="login" v-if="status == 'login'">
+        <qw-form
+          class="normal"
+          v-model="form"
+          :rules="rules"
+          @submit="login"
+          v-if="status == 'login'"
+        >
           <p class="control-title">登录</p>
           <label>
             <i class="iconfont email"></i>
-            <qw-input v-model="form.email" placeholder="请输入邮箱" />
+            <qw-input v-model="form.email" placeholder="请输入邮箱" prop="email" />
           </label>
           <label>
             <i class="iconfont password"></i>
-            <qw-input v-model="form.password" placeholder="请输入密码" />
+            <qw-input v-model="form.password" placeholder="请输入密码" prop="password"/>
           </label>
           <label>
             <span class="float-right" @click="status = 'findPassword'"
@@ -148,12 +154,27 @@ export default {
         passwordConfirm: "",
         code: "",
       },
+      rules: {
+        email: [
+          { require: true, msg: "需填上邮箱", trigger: ["blur", "input"] },
+          {
+            validator: (val) => {
+              return /[\w+]+@\w+\.\w+/.test(val);
+            },
+            msg : "请输入正确格式的邮箱",
+            trigger : "input"
+          },
+        ],
+        password : [
+           { require: true, msg: "需填上密码", trigger: ["blur", "input"]}
+        ]
+      },
     };
   },
-  watch : {
-    status(){
+  watch: {
+    status() {
       this.form.code = "";
-    }
+    },
   },
   methods: {
     getCode() {
@@ -163,7 +184,7 @@ export default {
     },
     login() {
       const { email, password } = this.form;
-      api.login({email,password}).then((result) => {
+      api.login({ email, password }).then((result) => {
         if (result.status == "fail") {
           alert(result.msg);
         } else {
@@ -175,21 +196,21 @@ export default {
     },
     register() {
       const { username, email, password, code } = this.form;
-      api.register({username,email,password,code}).then((result) => {
-        if(result.status == 'fail'){
-          alert("信息填写不全")
-        }else{
+      api.register({ username, email, password, code }).then((result) => {
+        if (result.status == "fail") {
+          alert("信息填写不全");
+        } else {
           alert("注册成功");
-          this.status = 'login'
+          this.status = "login";
         }
       });
     },
-    findPassword(){
-      const { email,password,code } = this.form;
-      api.findPassword({email,password,code}).then(data=>{
+    findPassword() {
+      const { email, password, code } = this.form;
+      api.findPassword({ email, password, code }).then((data) => {
         console.log(data);
-      })
-    }
+      });
+    },
   },
   mounted() {
     window.vm = this;
@@ -233,7 +254,6 @@ export default {
         margin: 20px auto;
         font-size: 12px;
         border-radius: 8px;
-        overflow: hidden;
         position: relative;
         &.verify-code {
           display: flex;

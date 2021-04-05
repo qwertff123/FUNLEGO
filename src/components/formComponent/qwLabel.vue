@@ -12,5 +12,6 @@ export default {
 <style scoped lang="less">
 .qw-label{
     display: flex;
+    height: 100%;
 }
 </style>

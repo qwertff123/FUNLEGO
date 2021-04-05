@@ -15,6 +15,7 @@ export default {
     handleClick() {
       //触发父组件上的selected方法
       //向父组件传递value
+      console.log(this.value,"666");
       this.$parent.$emit("selected", this.value);
     },
   },

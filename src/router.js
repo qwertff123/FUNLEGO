@@ -67,7 +67,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     //这只是测试阶段的登录校验，没有安全性
-    if (window.document.cookie.includes("appkey")) {
+    if (to.path=="/login" || window.document.cookie.includes("appkey")) {
         //获取作用于菜单栏的路由
         const menuRoutes = routes.filter(val => {
             return val.meta && val.meta.menu;
