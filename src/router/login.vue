@@ -12,19 +12,19 @@
           v-if="status == 'login'"
         >
           <p class="control-title">登录</p>
-          <label>
+          <qw-input v-model="form.email" placeholder="请输入邮箱" prop="email">
             <i class="iconfont email"></i>
-            <qw-input v-model="form.email" placeholder="请输入邮箱" prop="email" />
-          </label>
-          <label>
+          </qw-input>
+          <qw-input
+            v-model="form.password"
+            placeholder="请输入密码"
+            prop="password"
+          >
             <i class="iconfont password"></i>
-            <qw-input v-model="form.password" placeholder="请输入密码" prop="password"/>
-          </label>
-          <label>
-            <span class="float-right" @click="status = 'findPassword'"
-              >忘记密码?</span
-            >
-          </label>
+          </qw-input>
+          <div class="find-password" @click="status = 'findPassword'">
+            <span>忘记密码?</span>
+          </div>
 
           <div class="bottom">
             <qw-button
@@ -34,36 +34,36 @@
             ></qw-button>
             <qw-button
               class="normal no-active float-right"
-              type="button"
               label="注册"
+              type="button"
               @click="status = 'register'"
             ></qw-button>
           </div>
         </qw-form>
         <qw-form class="normal" @submit="register" v-if="status == 'register'">
           <p class="control-title">注册</p>
-          <label>
+
+          <qw-input v-model="form.username" placeholder="请输入用户名">
             <i class="iconfont username"></i>
-            <qw-input v-model="form.username" placeholder="请输入用户名" />
-          </label>
-          <label>
+          </qw-input>
+
+          <qw-input v-model="form.email" placeholder="请输入邮箱">
             <i class="iconfont email"></i>
-            <qw-input v-model="form.email" placeholder="请输入邮箱" />
-          </label>
-          <label>
-            <i class="iconfont password"></i>
-            <qw-input v-model="form.password" placeholder="请输入密码" />
-          </label>
-          <label>
-            <i class="iconfont password"></i>
+          </qw-input>
+            <qw-input v-model="form.password" placeholder="请输入密码">
+              <i class="iconfont password"></i>
+            </qw-input>
+
             <qw-input
               v-model="form.passwordConfirm"
               placeholder="请重新输入密码"
-            />
-          </label>
+            >
+              <i class="iconfont password"></i>
+            </qw-input>
           <label class="verify-code">
-            <i class="iconfont password"></i>
-            <qw-input v-model="form.code" placeholder="请输入验证码" />
+            <qw-input v-model="form.code" placeholder="请输入验证码">
+               <i class="iconfont password"></i>
+            </qw-input>
             <qw-button
               v-model="form.code"
               class="normal"
@@ -150,7 +150,7 @@ export default {
       form: {
         username: "",
         email: "1648494263@qq.com",
-        password: "123456",
+        password: "1234",
         passwordConfirm: "",
         code: "",
       },
@@ -161,13 +161,13 @@ export default {
             validator: (val) => {
               return /[\w+]+@\w+\.\w+/.test(val);
             },
-            msg : "请输入正确格式的邮箱",
-            trigger : "input"
+            msg: "请输入正确格式的邮箱",
+            trigger: "input",
           },
         ],
-        password : [
-           { require: true, msg: "需填上密码", trigger: ["blur", "input"]}
-        ]
+        password: [
+          { require: true, msg: "需填上密码", trigger: ["blur", "input"] },
+        ],
       },
     };
   },
@@ -195,6 +195,7 @@ export default {
       });
     },
     register() {
+      console.log("注册了");
       const { username, email, password, code } = this.form;
       api.register({ username, email, password, code }).then((result) => {
         if (result.status == "fail") {
@@ -247,53 +248,58 @@ export default {
         color: rgb(102, 94, 255);
         font-weight: bolder;
       }
-      label {
-        display: block;
+      .qw-input {
         width: 230px;
         height: 40px;
         margin: 20px auto;
         font-size: 12px;
         border-radius: 8px;
         position: relative;
-        &.verify-code {
-          display: flex;
+        background-color: white;
+        box-sizing: border-box;
+      }
+      .find-password {
+        width: 230px;
+        height: 40px;
+        margin: 20px auto;
+        font-size: 12px;
+        text-align: right;
 
-          .qw-button {
-            flex-shrink: 0;
-            flex-grow: 0;
-            width: 80px;
-            white-space: nowrap;
-            margin-left: 15px;
-            background-color: rgb(102, 94, 255);
-            color: white;
-            border-radius: 10px;
-            transform: scale(0.8);
-          }
+        span {
+          cursor: pointer;
         }
-        i {
-          position: absolute;
-          display: inline-block;
-          height: 20px;
-          left: 10px;
-          top: 50%;
-          line-height: 20px;
-          margin-top: -10px;
-          &.username::after {
-            content: "\e6b3";
-          }
-          &.email::after {
-            content: "\e66a";
-          }
-          &.password::after {
-            content: "\e630";
-          }
+      }
+      // label {
+      //   display: block;
+      //   &.verify-code {
+      //     display: flex;
+      // }
+      .qw-button {
+        flex-shrink: 0;
+        flex-grow: 0;
+        width: 80px;
+        white-space: nowrap;
+        margin-left: 15px;
+        background-color: rgb(102, 94, 255);
+        color: white;
+        border-radius: 10px;
+        transform: scale(0.8);
+      }
+      i {
+        display: inline-block;
+        height: 20px;
+        left: 10px;
+        top: 50%;
+        line-height: 20px;
+        margin-top: -10px;
+        &.username::after {
+          content: "\e6b3";
         }
-        .qw-input {
-          width: 100%;
-          height: 100%;
-          padding: 5px 0 5px 35px;
-          box-sizing: border-box;
-          border-radius: 8px;
+        &.email::after {
+          content: "\e66a";
+        }
+        &.password::after {
+          content: "\e630";
         }
       }
       .bottom {

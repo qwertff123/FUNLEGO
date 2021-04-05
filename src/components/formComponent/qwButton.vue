@@ -1,6 +1,6 @@
 <template>
   <button
-    class="qw-submit"
+    class="qw-button"
     :class="['color',qwClass]"
     :type="type == 'submit' ? 'submit' : 'button'"
     @click="$emit('click')"
@@ -9,13 +9,13 @@
 <script>
 export default {
   props: ["color", "type", "label","qwClass"],
+  mounted(){
+    console.log(this.type == 'submit' ? 'submit' : 'button');
+  }
 };
 </script>
 <style scoped lang="less">
-.qw-submit {
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
+.qw-button {
   background-color: rgb(58, 205, 225);
   color: white;
   display: flex;

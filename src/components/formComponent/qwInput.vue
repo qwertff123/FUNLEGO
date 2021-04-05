@@ -1,9 +1,10 @@
 <template>
-  <div class="qw-input">
+  <div class="qw-input" :class="vertifyClass">
     <div class="content">
+      <slot></slot>
       <input
         type="text"
-        :class="[qwClass, vertifyClass]"
+        :class="[qwClass]"
         :placeholder="placeholder"
         :value="value"
         @input="$emit('input', $event.target.value)"
@@ -34,7 +35,7 @@ export default {
   computed: {
     vertifyClass() {
       //没有校验规则无需添加校验样式
-      if(!this.rules){
+      if (!this.rules) {
         return "";
       }
       const errorMsg = this.errorMsg;
@@ -59,33 +60,36 @@ export default {
   mounted() {
     //用户交互时触发的表单的校验
     console.log(this.rules);
-    this.rules && registerVertifyEvent({
-      instance: this,
-      rules: this.rules,
-      el: this.$refs.input,
-      success : (arrow)=>{
-        if(arrow){
-          this.errorMsg = "";
-        }
-      },
-      error: (msg) => {
-        this.errorMsg = msg;
-      },
-    });
+    this.rules &&
+      registerVertifyEvent({
+        instance: this,
+        rules: this.rules,
+        el: this.$refs.input,
+        success: (arrow) => {
+          if (arrow) {
+            this.errorMsg = "";
+          }
+        },
+        error: (msg) => {
+          this.errorMsg = msg;
+        },
+      });
 
     //当表单提交时，有事件总bus发出的事件
     //当触发时，比对当前prop标记的表单是否存在错误
     //参数为所有校验错误
-    this.$formBus.$on("submitVertify",(vertifyError)=>{
-      const result = vertifyError.filter(val=>{
-        return val.prop == this.prop;
-      }).pop();
-      if(result){
-        this.errorMsg =result.msg;
-      }else{
+    this.$formBus.$on("submitVertify", (vertifyError) => {
+      const result = vertifyError
+        .filter((val) => {
+          return val.prop == this.prop;
+        })
+        .pop();
+      if (result) {
+        this.errorMsg = result.msg;
+      } else {
         this.errorMsg = "";
       }
-    })
+    });
   },
 };
 </script>
@@ -95,6 +99,16 @@ export default {
   position: relative;
   flex: 1 1 auto;
   display: flex;
+  border: 1px solid #eee;
+
+  &.error {
+    border: 1px solid #f56c6c;
+  }
+
+  &.correct {
+    border: 1px solid #50bc93;
+  }
+  
   .error-msg {
     position: absolute;
     bottom: -18px;
@@ -104,30 +118,21 @@ export default {
   }
   .content {
     position: relative;
+    display: flex;
   }
   input {
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
+    // flex:1 1 auto;
+    margin-left: 20px;
     padding-left: 10px;
-    padding-right:30px;
+    padding-right: 30px;
     box-sizing: border-box;
-    border: 1px solid #eee;
-
-    &.error {
-      border: 1px solid #f56c6c;
-      padding-right: 30px;
-    }
-
-    &.correct {
-      border: 1px solid #50bc93;
-      padding-right: 30px;
-    }
   }
   i {
     width: 20px;
     height: 20px;
     line-height: 20px;
-    text-align: 20px;
     position: absolute;
     right: 0;
     margin-top: -10px;
