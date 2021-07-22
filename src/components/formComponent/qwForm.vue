@@ -25,18 +25,21 @@ export default {
   },
   methods: {
     submit(e) {
-      console.log(123);
       const form = this.form;
       const totalRules = this.rules;
       const vertifyError = [];
-      for (const key in totalRules) {
+      for (const key in form) {
+        if(!totalRules[key]){
+          continue;
+        }
         totalRules[key].forEach((rule) => {
           //如果该表单需要填值但并没有提供值
           if (rule.require && !form[key]) {
+            
             vertifyError.push({ prop: key, msg: rule.msg});
           }else if(rule.validator){
             if(!rule.validator(form[key])){
-              vertifyError.push({ prop: key, msg: rule.msg});
+              vertifyError.push({ prop: key, msg: rule.msg });
             }
           }
         });

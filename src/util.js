@@ -39,3 +39,16 @@ export function getBase64(el) {
         reader.readAsBinaryString(files);
     });
 }
+
+/**
+ * 根据所给出的key数组过滤对象
+ * @param { Object } obj 对象
+ * @param { Array } keys  键名
+ */
+export function filterObj(obj,keys){
+    const result = {};
+    keys.forEach(key=>{
+        result[key] = obj[key];
+    })
+    return result;
+}

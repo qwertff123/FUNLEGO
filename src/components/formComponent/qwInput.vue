@@ -9,7 +9,7 @@
         @input="$emit('input', $event.target.value)"
         ref="input"
       />
-      <i class="iconfont" :class="vertifyClass"></i>
+      <i class="iconfont" :class="['status',vertifyClass]"></i>
     </div>
 
     <div class="error-msg">
@@ -60,7 +60,6 @@ export default {
   },
   mounted() {
     //用户交互时触发的表单的校验
-    console.log(this.rules);
     this.rules &&
       registerVertifyEvent({
         instance: this,
@@ -80,7 +79,6 @@ export default {
     //当触发时，比对当前prop标记的表单是否存在错误
     //参数为所有校验错误
     this.$formBus.$on("submitVertify", (vertifyError) => {
-      console.log(666);
       const result = vertifyError
         .filter((val) => {
           return val.prop == this.prop;
@@ -100,7 +98,7 @@ export default {
 .qw-input {
   position: relative;
   border: 1px solid #eee;
-
+  
   &.error {
     border: 1px solid #f56c6c;
 
@@ -133,18 +131,25 @@ export default {
   }
 
   input {
-    width: 100%;
     background-color: transparent;
-    text-align: inherit;
+    position: absolute;
+    width:100%;
+    top:0;
+    bottom:0;
+    box-sizing: border-box;
+    padding-left:30px;
   }
   i {
     width: 20px;
     height: 20px;
     line-height: 20px;
-    position: absolute;
-    right: 0;
+    position: relative;
     margin-top: -10px;
     top: 50%;
+  }
+  i.status{
+    position: absolute;
+    right:0;
   }
 }
 </style>
