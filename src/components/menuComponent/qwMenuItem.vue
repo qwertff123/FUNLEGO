@@ -1,35 +1,43 @@
 <template>
-  <div
-    class="qw-menu-item"
-    :class="{ selected: isSelected }"
-    @click="selected"
-  >
+  <div class="qw-menu-item" :class="{ selected: isSelected }" @click="selected">
     <slot></slot>
   </div>
 </template>
 <script>
 export default {
+  data() {
+    return {
+      oCurSelected: null,
+    };
+  },
   props: {
     index: {
       type: [String, Number],
       require: true,
     },
   },
+  inject: ["curSelected", "defaultActive"],
   methods: {
-      selected(){
-          this.$menuBus.$emit("selected",this.index);
-      }
+    selected() {
+      this.$menuBus.$emit("selected", this.index);
+    },
   },
-  computed : {
-      isSelected(){
-          const curSelected = this.$menuBus.curSelected;
-          if(curSelected){
-              return curSelected == this.index
-          }else{
-              return this.$menuBus.defaultActive == this.index;
-          }
+  computed: {
+    isSelected() {
+      if (this.oCurSelected) {
+        return this.oCurSelected == this.index;
+      } else {
+        return this.defaultActive == this.index;
       }
-  }
+    },
+  },
+  created() {
+    this.oCurSelected = this.curSelected;
+
+    this.$menuBus.$on("update_curSelected", (curSelected) => {
+      this.oCurSelected = curSelected;
+    });
+  },
 };
 </script>
 <style lang="less">

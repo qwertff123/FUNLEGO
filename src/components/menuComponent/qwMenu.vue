@@ -6,14 +6,23 @@
 <script>
 /* eslint-disable no-unused-vars */
 export default {
-    props : ["defaultActive"],
-    created(){
-        this.$menuBus.defaultActive = this.defaultActive;
-        this.$menuBus.$on("selected",(index)=>{
-            this.$menuBus.curSelected = index;
-        })
-        window.vm = this;
-    }
+  data() {
+    return {
+    };
+  },
+  props: ["defaultActive", "active"],
+  provide: function () {
+    return {
+      curSelected: this.active,
+      defaultActive: this.defaultActive,
+    };
+  },
+  created() {
+    this.$menuBus.$on("selected", (index) => {
+      this.$menuBus.$emit("update_curSelected",index);
+    });
+    window.vm = this;
+  },
 };
 </script>
 <style scoped>

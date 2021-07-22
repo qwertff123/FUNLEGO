@@ -7,10 +7,11 @@ import Vue from "vue";
 Vue.prototype.$menuBus = new Vue({
     data(){
         return {
-            curSelected : null,
-            defaultActive : null,
+            // curSelected : null,
+            // defaultActive : null,
         }
-    }
+    },
+
 });
 
 export default {

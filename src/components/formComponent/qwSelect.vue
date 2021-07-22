@@ -38,6 +38,7 @@ export default {
     event: "change",
   },
   props: ["label", "placeholder", "prop", "value", "watch"],
+  inject : ["totalRules"],
   data() {
     return {
       isDrap: false,
@@ -82,7 +83,7 @@ export default {
     },
   },
   created() {
-    const totalRules = this.$formBus.rules;
+    const totalRules = this.totalRules;
     for (const key in totalRules) {
       if (key == this.prop) {
         this.rules = totalRules[key];

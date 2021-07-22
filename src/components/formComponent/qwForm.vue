@@ -10,14 +10,24 @@ export default {
     event: "change",
   },
   props: ["qwClass", "rules", "form"],
+  provide : function(){
+    return {
+      totalRules : this.rules
+    }
+  },
+  data(){
+    return {
+      vertifyError : []
+    }
+  },
   created() {
     this.$formBus.rules = this.rules;
   },
   methods: {
     submit(e) {
+      console.log(123);
       const form = this.form;
       const totalRules = this.rules;
-      const $formBus = this.$formBus;
       const vertifyError = [];
       for (const key in totalRules) {
         totalRules[key].forEach((rule) => {
@@ -31,9 +41,8 @@ export default {
           }
         });
       }
-      console.log("vertifyError",vertifyError);
-       $formBus.vertifyError = vertifyError;
-      if (this.$formBus.vertifyError.length == 0) {
+      this.$formBus.$emit("submitVertify",vertifyError);
+      if (vertifyError.length == 0) {
         this.$emit("submit", e.target);
       }
     },

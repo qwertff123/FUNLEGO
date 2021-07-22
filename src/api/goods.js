@@ -57,7 +57,7 @@ export function addGoods(data) {
         method: "post",
         url: "/products/add",
         data: {
-            ...data     
+            ...data
         },
     })
 }
@@ -67,14 +67,14 @@ export function addGoods(data) {
  * @param {*} data 包括商品信息的表单数据以及appkey
  * @returns 
  */
-export function editGoods(data){
+export function editGoods(data) {
     return axios({
         method: "put",
         url: "/products/edit",
         data: {
-          ...data
+            ...data
         },
-      })
+    })
 }
 /**
  * 得到所有类目信息
@@ -82,10 +82,74 @@ export function editGoods(data){
  */
 export function getCategoryInfo(appkey) {
     return axios({
-        methods: "get",
+        method: "get",
         url: "/category/all",
         params: {
             appkey
         },
     });
+}
+/**
+ * 添加商品类别
+ * @param {*} option 
+ * @returns 
+ */
+export function addCategory(option) {
+    /* eslint-disable */
+    const {
+        appkey,
+        id,
+        name,
+        c_items
+    } = option;
+    console.log(name)
+    return axios({
+        method: "post",
+        url: "/category/add",
+        data: {
+            appkey,
+            id,
+            name,
+            c_items
+        }
+    })
+}
+
+/**
+ * 移除商品类别
+ * @param {*} option 
+ * @returns 
+ */
+export function removeCategory(option) {
+    const {
+        appkey,
+        id = Math.round(Math.random() * 1000000),
+    } = option;
+    return axios({
+        method: "delete",
+        url: "/category/" + id,
+        data: {
+            appkey,
+            id
+        }
+    })
+}
+
+export function editSubCategory(option) {
+    const {
+        appkey,
+        id,
+        name,
+        c_items
+    } = option;
+    return axios({
+        method: "put",
+        url: "/category/edit",
+        data: {
+            appkey,
+            id,
+            name,
+            c_items
+        }
+    })
 }

@@ -7,29 +7,49 @@ Vue.use(VueRouter);
 const routes = [{
         path: "/",
         name: "home",
-        redirect: "/goodsManage",
+        redirect: "goodsManage",
         meta: {
             //标记为一级菜单
             menu: 1
         },
         component: () => import("./router/home"),
         children: [{
-                path: "goodsManage",
-                name: "goodsManage",
-                meta: {
-                    title: "商品管理",
-                    icon : "goodsManage"
-                },
-                component: () => import("./router/goodsManage")
-            }
-        ],
+            path: "/goodsManage",
+            name: "goodsManage",
+            meta: {
+                title: "商品管理",
+                icon: "goodsManage",
+                index: "1"
+            },
+            component: () => import("./router/goodsManage")
+        }],
+    },
+    {
+        path: "/1",
+        redirect: "categoryManage",
+        meta: {
+            menu: 1
+        },
+        component: () => import("./router/home"),
+        children: [{
+            path: "/categoryManage",
+            name : "categoryManage",
+            meta: {
+                title: "类别管理",
+                icon: "categoryManage",
+                index : 2
+            },
+            component: () => import("./router/categoryManage")
+        }]
+
     },
     {
         path: "/saleManage",
         name: "saleManage",
         meta: {
             title: "销售管理",
-            icon : "saleManage",
+            icon: "saleManage",
+            index : 3,
             //标记为2级菜单
             menu: 2
         },
@@ -40,7 +60,8 @@ const routes = [{
                 path: "statistics",
                 meta: {
                     title: "销售统计",
-                    icon : "saleStatistics"
+                    icon: "saleStatistics",
+                    index : "3-1"
                 },
                 component: () => import("./router/statistics")
             },
@@ -49,7 +70,8 @@ const routes = [{
                 path: "order",
                 meta: {
                     title: "订单管理",
-                    icon : "orderManage"
+                    icon: "orderManage",
+                    index : "3-2"
                 },
                 component: () => import("./router/order")
             }
@@ -67,7 +89,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     //这只是测试阶段的登录校验，没有安全性
-    if (to.path=="/login" || window.document.cookie.includes("appkey")) {
+    if (to.path == "/login" || window.document.cookie.includes("appkey")) {
         //获取作用于菜单栏的路由
         const menuRoutes = routes.filter(val => {
             return val.meta && val.meta.menu;

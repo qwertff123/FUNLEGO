@@ -32,7 +32,6 @@
             ></i>
           </div>
         </div>
-
         <qw-table :table-data="tableData" @selected="showInfo">
           <qw-table-column prop="id" label="id" />
           <qw-table-column prop="title" label="标题" />
@@ -112,18 +111,18 @@
         <div class="back" @click="isEdit = false">返回</div>
         <div class="card">
           <div class="id">ID : {{ goodsDetail.id }}</div>
-          <qw-form qw-class="form" @submit="submit">
+          <qw-form class="form" @submit="submit">
             <div class="form-left">
-              <qw-label label="商品标题" qw-class="item">
+              <qw-label label="商品标题" class="item">
                 <qw-input v-model="form.title"></qw-input>
               </qw-label>
 
-              <qw-label label="商品描述" qw-class="item">
+              <qw-label label="商品描述" class="item">
                 <qw-input v-model="form.desc"></qw-input>
               </qw-label>
 
               <div class="item">
-                <qw-label label="商品类目" qw-class="left">
+                <qw-label label="商品类目" class="left">
                   <qw-select v-model="form.category">
                     <qw-option
                       v-for="category in categoryList"
@@ -134,7 +133,7 @@
                   </qw-select>
                 </qw-label>
 
-                <qw-label label="商品子类目" qw-class="right">
+                <qw-label label="商品子类目" class="right">
                   <qw-select
                     v-model="form.c_item"
                     placeholder="请选择"
@@ -150,10 +149,10 @@
                 </qw-label>
               </div>
               <div class="item">
-                <qw-label label="商品价格" qw-class="left">
+                <qw-label label="商品价格" class="left">
                   <qw-input class="center" v-model="form.price"></qw-input>
                 </qw-label>
-                <qw-label label="商品折扣价" qw-class="right">
+                <qw-label label="商品折扣价" class="right">
                   <qw-input
                     class="center"
                     v-model="form.price_off"
@@ -161,7 +160,7 @@
                   ></qw-input>
                 </qw-label>
               </div>
-              <qw-label label="商品标签" qw-class="tags-area">
+              <qw-label label="商品标签" class="tags-area">
                 <qw-tags-list
                   v-model="form.tags"
                   placeholder="请输入标签名"
@@ -170,10 +169,10 @@
             </div>
             <div class="form-right">
               <div class="item">
-                <qw-label label="商品单位" qw-class="left">
+                <qw-label label="商品单位" class="left">
                   <qw-input class="center" v-model="form.unit"></qw-input>
                 </qw-label>
-                <qw-label label="是否上架" qw-class="right switch">
+                <qw-label label="是否上架" class="right switch">
                   <div class="switch">
                     <qw-switch v-model="form.status"></qw-switch>
                   </div>
@@ -181,17 +180,17 @@
               </div>
 
               <div class="item">
-                <qw-label label="库存量" qw-class="left">
+                <qw-label label="库存量" class="left">
                   <qw-input class="center" v-model="form.inventory"></qw-input>
                 </qw-label>
-                <qw-label label="销售量" qw-class="right">
+                <qw-label label="销售量" class="right">
                   <qw-input class="center" v-model="form.sale"></qw-input>
                 </qw-label>
               </div>
-              <qw-label label="商品图片" qw-class="">
+              <qw-label label="商品图片" class="">
                 <div class="image-area">
-                  <qw-carousel qw-class="carousel">
-                    <carousel-control move="prev" qw-class="control"
+                  <qw-carousel class="carousel">
+                    <carousel-control move="prev" class="control"
                       >《</carousel-control
                     >
                     <carousel-area
@@ -202,12 +201,12 @@
                       <carousel-item
                         v-for="img in form.images"
                         :key="img"
-                        qw-class="carousel-item"
+                        class="carousel-item"
                       >
                         <img :src="img" alt="" />
                       </carousel-item>
                     </carousel-area>
-                    <carousel-control move="next" qw-class="control">
+                    <carousel-control move="next" class="control">
                       》</carousel-control
                     >
                   </qw-carousel>
@@ -233,12 +232,12 @@
               <qw-button
                 type="submit"
                 label="修改"
-                qw-class="btn submit"
+                class="btn submit"
               ></qw-button>
               <qw-button
                 type="button"
                 label="重置"
-                qw-class="btn reset"
+                class="btn reset"
                 @click="resetForm"
               ></qw-button>
             </div>
@@ -248,16 +247,16 @@
       <div class="edit add" v-if="isAdd">
         <div class="back" @click="isAdd = false">返回</div>
         <div class="card">
-          <qw-form qw-class="form" @submit="addGoods">
+          <qw-form class="form" @submit="addGoods">
             <div class="form-left">
-              <qw-label label="商品标题" qw-class="item">
+              <qw-label label="商品标题" class="item">
                 <qw-input
                   v-model="formAddGoods.title"
                   placeholder="请输入商品标题"
                 ></qw-input>
               </qw-label>
 
-              <qw-label label="商品描述" qw-class="item">
+              <qw-label label="商品描述" class="item">
                 <qw-input
                   v-model="formAddGoods.desc"
                   placeholder="请输入商品描述"
@@ -265,7 +264,7 @@
               </qw-label>
 
               <div class="item">
-                <qw-label label="商品类目" qw-class="left">
+                <qw-label label="商品类目" class="left">
                   <qw-select
                     v-model="formAddGoods.category"
                     placeholder="请选择"
@@ -279,7 +278,7 @@
                   </qw-select>
                 </qw-label>
 
-                <qw-label label="商品子类目" qw-class="right">
+                <qw-label label="商品子类目" class="right">
                   <qw-select
                     v-model="formAddGoods.c_item"
                     placeholder="请选择"
@@ -295,14 +294,14 @@
                 </qw-label>
               </div>
               <div class="item">
-                <qw-label label="商品价格" qw-class="left">
+                <qw-label label="商品价格" class="left">
                   <qw-input
                     class="center"
                     v-model="formAddGoods.price"
                     placeholder="请输入价格"
                   ></qw-input>
                 </qw-label>
-                <qw-label label="商品折扣价" qw-class="right">
+                <qw-label label="商品折扣价" class="right">
                   <qw-input
                     class="center"
                     v-model="formAddGoods.price_off"
@@ -310,7 +309,7 @@
                   ></qw-input>
                 </qw-label>
               </div>
-              <qw-label label="商品标签" qw-class="tags-area">
+              <qw-label label="商品标签" class="tags-area">
                 <qw-tags-list
                   v-model="formAddGoods.tags"
                   placeholder="请输入标签名"
@@ -319,14 +318,14 @@
             </div>
             <div class="form-right">
               <div class="item">
-                <qw-label label="商品单位" qw-class="left">
+                <qw-label label="商品单位" class="left">
                   <qw-input
                     class="center"
                     v-model="formAddGoods.unit"
                     placeholder="请输入单位"
                   ></qw-input>
                 </qw-label>
-                <qw-label label="是否上架" qw-class="right switch">
+                <qw-label label="是否上架" class="right switch">
                   <div class="switch">
                     <qw-switch v-model="formAddGoods.status"></qw-switch>
                   </div>
@@ -334,14 +333,14 @@
               </div>
 
               <div class="item">
-                <qw-label label="库存量" qw-class="left">
+                <qw-label label="库存量" class="left">
                   <qw-input
                     class="center"
                     v-model="formAddGoods.inventory"
                     placeholder="请输入库存量"
                   ></qw-input>
                 </qw-label>
-                <qw-label label="销售量" qw-class="right">
+                <qw-label label="销售量" class="right">
                   <qw-input
                     class="center"
                     v-model="formAddGoods.sale"
@@ -349,14 +348,14 @@
                   ></qw-input>
                 </qw-label>
               </div>
-              <qw-label label="商品图片" qw-class="">
+              <qw-label label="商品图片" class="">
                 <div class="image-area">
-                  <qw-carousel qw-class="carousel">
-                    <carousel-control move="prev" qw-class="control"
+                  <qw-carousel class="carousel">
+                    <carousel-control move="prev" class="control"
                       >《</carousel-control
                     >
                     <carousel-area
-                      qw-class="carousel-area"
+                      class="carousel-area"
                       item-width="200"
                       :watch="formAddGoods.images"
                       v-model="curImgIndex"
@@ -365,12 +364,12 @@
                       <carousel-item
                         v-for="img in formAddGoods.images"
                         :key="img"
-                        qw-class="carousel-item"
+                        class="carousel-item"
                       >
                         <img :src="img" alt="" />
                       </carousel-item>
                     </carousel-area>
-                    <carousel-control move="next" qw-class="control">
+                    <carousel-control move="next" class="control">
                       》</carousel-control
                     >
                   </qw-carousel>
@@ -396,7 +395,7 @@
               <qw-button
                 type="submit"
                 label="添加"
-                qw-class="btn submit"
+                class="btn submit"
               ></qw-button>
             </div>
           </qw-form>
@@ -501,7 +500,7 @@ export default {
   methods: {
     //用于初始化所需要的数据
     initData() {
-      api.getGoodsList("qwertff_1616028685554").then((data) => {
+      api.getGoodsList("qwertff_1618500498552").then((data) => {
         if (data.status != "success") {
           throw new Error(data.msg);
         }
@@ -537,7 +536,7 @@ export default {
       api
         .getGoodsDetail({
           id: data.id,
-          appkey: "qwertff_1616028685554",
+          appkey: "qwertff_1618500498552",
         })
         .then((data) => {
           this.goodsDetail = data.data;
@@ -565,7 +564,7 @@ export default {
       api
         .getGoodsDetail({
           id: data.id,
-          appkey: "qwertff_1616028685554",
+          appkey: "qwertff_1618500498552",
         })
         .then((data) => {
           this.goodsDetail = data.data;
@@ -603,11 +602,11 @@ export default {
       this.form.updateTime = Date();
       api
         .editGoods({
-          appkey: "qwertff_1616028685554",
+          appkey: "qwertff_1618500498552",
           ...this.form,
         })
         .then(() => {
-          return api.getGoodsList("qwertff_1616028685554");
+          return api.getGoodsList("qwertff_1618500498552");
         })
         .then((data) => {
           if (data.status != "success") {
@@ -645,7 +644,7 @@ export default {
     addGoods() {
       api
         .addGoods({
-          appkey: "qwertff_1616028685554",
+          appkey: "qwertff_1618500498552",
           ...this.formAddGoods,
         })
         .then((result) => {
@@ -698,7 +697,7 @@ export default {
   created() {
     window.vm = this;
     this.initData();
-    api.getCategoryInfo("qwertff_1616028685554").then((data) => {
+    api.getCategoryInfo("qwertff_1618500498552").then((data) => {
       this.categoryInfo = data.data.data;
       this.categoryList = this.categoryInfo.map((val) => {
         return {

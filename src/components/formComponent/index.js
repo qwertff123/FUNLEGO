@@ -4,19 +4,7 @@ import "./index.less";
 import "./iconfont.css";
 
 import Vue from "vue";
-Vue.prototype.$formBus = new Vue({
-  data(){
-    return {
-      rules : {},
-      vertifyError : []
-    }
-  },
-  watch : {
-    vertifyError(){
-      this.$emit("submitVertify",this.vertifyError);
-    }
-  }
-});
+Vue.prototype.$formBus = new Vue({});
 
 import qwForm from "./qwForm"
 import qwInput from "./qwInput";

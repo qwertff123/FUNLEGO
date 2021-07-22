@@ -2,7 +2,7 @@
   <div id="aside">
     <h1>qwertff</h1>
     <div class="aside-list">
-      <qw-menu default-active="1">
+      <qw-menu default-active="3-2" :active="$route.meta.index">
         <template v-for="(item, index) in $store.state.menuRoutes">
           <router-link
             :to="{ name: item.name }"
@@ -26,7 +26,7 @@
             <qw-menu-item-group
               @click.native="navigate"
               :index="index + 1"
-              :default-active="index + 1 + '-' + 1"
+              :default-group-active="index + 1 + '-' + 1"
             >
               <template #title>
                 <i class="iconfont" :class="item.meta.icon"></i
@@ -97,7 +97,7 @@ export default {
     up(el) {
       slide.up(el);
     },
-  },
+  }
 };
 </script>
 <style scoped lang="less">
@@ -122,6 +122,10 @@ i {
   }
   &.orderManage::after {
     content: "\e634";
+  }
+  
+  &.categoryManage::after{
+    content: "\e617";
   }
 }
 

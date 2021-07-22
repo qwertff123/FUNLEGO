@@ -20,6 +20,11 @@
 import Slide from "./slide";
 const slide = new Slide(300);
 export default {
+  data(){
+    return {
+      oCurSelected : null
+    }
+  },
   props: {
     title: {
       type: String,
@@ -29,14 +34,15 @@ export default {
       type: [String, Number],
       require: true,
     },
-    defaultActive: {
+    defaultGroupActive: {
       type: String,
     },
   },
+  inject: ["curSelected","defaultActive"],
   methods: {
     selected() {
       // 下拉菜单时默认选中的子菜单
-      let curSelected = this.defaultActive ? this.defaultActive : this.index;
+      let curSelected = this.defaultGroupActive ? this.defaultGroupActive : this.index;
       this.$menuBus.$emit("selected", curSelected);
     },
     up(el) {
@@ -48,16 +54,21 @@ export default {
   },
   computed: {
     isSelected() {
-      let curSelected = this.$menuBus.curSelected;
+      let curSelected = this.oCurSelected;
       if (curSelected) {
         curSelected += "";
         return curSelected.split("-")[0] == this.index;
-      } else if (this.$menuBus.defaultActive) {
-        return this.$menuBus.defaultActive.split("-")[0] == this.index;
+      } else if (this.defaultActive) {
+        return this.defaultActive.split("-")[0] == this.index;
       }
-
       return false;
     },
+  },
+  created() {
+    this.oCurSelected = this.curSelected;
+    this.$menuBus.$on("update_curSelected", (curSelected) => {
+      this.oCurSelected = curSelected;
+    });
   },
 };
 </script>
@@ -118,8 +129,7 @@ export default {
       overflow: hidden;
       transition: all 1s;
       background-color: rgb(248, 249, 254);
-      padding-left:20px;
-      box-sizing: border-box;
+
       .qw-menu-item {
         margin: 10px 0;
         width: 100%;

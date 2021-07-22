@@ -3,8 +3,7 @@
     <div class="content">
       <slot></slot>
       <input
-        type="text"
-        :class="[qwClass]"
+        :type="type == 'password' ? type : 'text'"
         :placeholder="placeholder"
         :value="value"
         @input="$emit('input', $event.target.value)"
@@ -25,7 +24,8 @@ export default {
     prop: "value",
     event: "input",
   },
-  props: ["placeholder", "value", "prop", "qwClass"],
+  props: ["placeholder", "value", "prop", "type"],
+  inject: ["totalRules"],
   data() {
     return {
       rules: null,
@@ -39,6 +39,7 @@ export default {
         return "";
       }
       const errorMsg = this.errorMsg;
+      console.log(errorMsg);
       if (errorMsg == null) {
         return null;
       } else if (errorMsg == "") {
@@ -49,10 +50,10 @@ export default {
     },
   },
   created() {
-    const totalRule = this.$formBus.rules;
-    for (const key in totalRule) {
+    const totalRules = this.totalRules;
+    for (const key in totalRules) {
       if (key == this.prop) {
-        this.rules = totalRule[key];
+        this.rules = totalRules[key];
         break;
       }
     }
@@ -79,6 +80,7 @@ export default {
     //当触发时，比对当前prop标记的表单是否存在错误
     //参数为所有校验错误
     this.$formBus.$on("submitVertify", (vertifyError) => {
+      console.log(666);
       const result = vertifyError
         .filter((val) => {
           return val.prop == this.prop;
@@ -97,18 +99,23 @@ export default {
 <style scoped lang="less">
 .qw-input {
   position: relative;
-  flex: 1 1 auto;
-  display: flex;
   border: 1px solid #eee;
 
   &.error {
     border: 1px solid #f56c6c;
+
+    input {
+      padding-right: 30px;
+    }
   }
 
   &.correct {
     border: 1px solid #50bc93;
+    input {
+      padding-right: 30px;
+    }
   }
-  
+
   .error-msg {
     position: absolute;
     bottom: -18px;
@@ -117,17 +124,18 @@ export default {
     padding-left: 5px;
   }
   .content {
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
     display: flex;
   }
+
   input {
-    // width: 100%;
-    // height: 100%;
-    // flex:1 1 auto;
-    margin-left: 20px;
-    padding-left: 10px;
-    padding-right: 30px;
-    box-sizing: border-box;
+    width: 100%;
+    background-color: transparent;
+    text-align: inherit;
   }
   i {
     width: 20px;

@@ -6,20 +6,15 @@
         <p class="title">QWERTFF</p>
         <qw-form
           class="normal"
-          v-model="form"
-          :rules="rules"
           @submit="login"
           v-if="status == 'login'"
+          key="login"
         >
           <p class="control-title">登录</p>
-          <qw-input v-model="form.email" placeholder="请输入邮箱" prop="email">
+          <qw-input v-model="form.email" placeholder="请输入邮箱">
             <i class="iconfont email"></i>
           </qw-input>
-          <qw-input
-            v-model="form.password"
-            placeholder="请输入密码"
-            prop="password"
-          >
+          <qw-input v-model="form.password" placeholder="请输入密码">
             <i class="iconfont password"></i>
           </qw-input>
           <div class="find-password" @click="status = 'findPassword'">
@@ -40,29 +35,49 @@
             ></qw-button>
           </div>
         </qw-form>
-        <qw-form class="normal" @submit="register" v-if="status == 'register'">
+        <qw-form
+          class="normal"
+          @submit="register"
+          v-else-if="status == 'register'"
+          v-model="form"
+          :rules="rules"
+          key="register"
+        >
           <p class="control-title">注册</p>
-
-          <qw-input v-model="form.username" placeholder="请输入用户名">
+          <qw-input
+            v-model="form.username"
+            placeholder="请输入用户名"
+            prop="username"
+          >
             <i class="iconfont username"></i>
           </qw-input>
 
-          <qw-input v-model="form.email" placeholder="请输入邮箱">
+          <qw-input v-model="form.email" placeholder="请输入邮箱" prop="email">
             <i class="iconfont email"></i>
           </qw-input>
-            <qw-input v-model="form.password" placeholder="请输入密码">
-              <i class="iconfont password"></i>
-            </qw-input>
+          <qw-input
+            type="password"
+            v-model="form.password"
+            placeholder="请输入密码"
+            prop="password"
+          >
+            <i class="iconfont password"></i>
+          </qw-input>
 
+          <qw-input
+            type="password"
+            v-model="form.passwordConfirm"
+            placeholder="请重新输入密码"
+            prop="passwordConfirm"
+          >
+            <i class="iconfont password"></i>
+          </qw-input>
+          <label class="vertify-code">
             <qw-input
-              v-model="form.passwordConfirm"
-              placeholder="请重新输入密码"
+              v-model="form.code"
+              placeholder="请输入验证码"
             >
-              <i class="iconfont password"></i>
-            </qw-input>
-          <label class="verify-code">
-            <qw-input v-model="form.code" placeholder="请输入验证码">
-               <i class="iconfont password"></i>
+              <i class="iconfont code"></i>
             </qw-input>
             <qw-button
               v-model="form.code"
@@ -89,27 +104,25 @@
         <qw-form
           class="normal"
           @submit="findPassword"
-          v-if="status == 'findPassword'"
+          v-else-if="status == 'findPassword'"
+          key="findPassword"
         >
           <p class="control-title">找回密码</p>
-          <label>
+
+          <qw-input v-model="form.email" placeholder="请输入邮箱">
             <i class="iconfont email"></i>
-            <qw-input v-model="form.email" placeholder="请输入邮箱" />
-          </label>
-          <label>
+          </qw-input>
+          <qw-input v-model="form.password" placeholder="请输入密码">
             <i class="iconfont password"></i>
-            <qw-input v-model="form.password" placeholder="请输入密码" />
-          </label>
-          <label>
+          </qw-input>
+
+          <qw-input v-model="form.passwordConfirm" placeholder="请重新输入密码">
             <i class="iconfont password"></i>
-            <qw-input
-              v-model="form.passwordConfirm"
-              placeholder="请重新输入密码"
-            />
-          </label>
-          <label class="verify-code">
-            <i class="iconfont password"></i>
-            <qw-input v-model="form.code" placeholder="请输入验证码" />
+          </qw-input>
+          <div class="vertify-code">
+            <qw-input v-model="form.code" placeholder="验证码">
+              <i class="iconfont code"></i>
+            </qw-input>
             <qw-button
               v-model="form.code"
               class="normal"
@@ -117,7 +130,7 @@
               type="button"
               @click="getCode"
             ></qw-button>
-          </label>
+          </div>
           <div class="bottom">
             <qw-button
               class="normal no-active"
@@ -167,6 +180,17 @@ export default {
         ],
         password: [
           { require: true, msg: "需填上密码", trigger: ["blur", "input"] },
+        ],
+        username: [
+          { require: true, msg: "需填上用户名", trigger: ["blur", "input"] },
+        ],
+        passwordConfirm: [
+          { require: true, msg: "请再次确认密码", trigger: ["blur", "input"] },
+          {
+            validator: (val) => val == this.form.password,
+            msg: "两次输入的密码不一致",
+            trigger: "input",
+          },
         ],
       },
     };
@@ -269,6 +293,17 @@ export default {
           cursor: pointer;
         }
       }
+      .vertify-code{
+        display: flex;
+        justify-content: space-between;
+        width:230px;
+        margin:0 auto;
+        height: 40px;
+        .qw-input{
+          width:120px;
+          margin: 0;
+        }
+      }
       // label {
       //   display: block;
       //   &.verify-code {
@@ -300,6 +335,9 @@ export default {
         }
         &.password::after {
           content: "\e630";
+        }
+        &.code::after{
+          content : "\e699";
         }
       }
       .bottom {
