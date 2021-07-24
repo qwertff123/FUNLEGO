@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router"
 //由于导入通过webpack处理过后，如果之前已经有导入过的，则直接获取之前的导出结果而不重新运行该文件
 import store from "./store";
+
 Vue.use(VueRouter);
 
 const routes = [{
@@ -12,7 +13,7 @@ const routes = [{
             //标记为一级菜单
             menu: 1
         },
-        component: () => import("./router/home"),
+        component: () => import("./views/home"),
         children: [{
             path: "/goodsManage",
             name: "goodsManage",
@@ -21,7 +22,7 @@ const routes = [{
                 icon: "goodsManage",
                 index: "1"
             },
-            component: () => import("./router/goodsManage")
+            component: () => import("./views/goodsManage")
         }],
     },
     {
@@ -30,7 +31,7 @@ const routes = [{
         meta: {
             menu: 1
         },
-        component: () => import("./router/home"),
+        component: () => import("./views/home"),
         children: [{
             path: "/categoryManage",
             name : "categoryManage",
@@ -39,7 +40,7 @@ const routes = [{
                 icon: "categoryManage",
                 index : 2
             },
-            component: () => import("./router/categoryManage")
+            component: () => import("./views/categoryManage")
         }]
 
     },
@@ -54,7 +55,7 @@ const routes = [{
             menu: 2
         },
         redirect: "saleManage/statistics",
-        component: () => import("./router/home"),
+        component: () => import("./views/home"),
         children: [{
                 name: "statistics",
                 path: "statistics",
@@ -63,7 +64,7 @@ const routes = [{
                     icon: "saleStatistics",
                     index : "3-1"
                 },
-                component: () => import("./router/statistics")
+                component: () => import("./views/statistics")
             },
             {
                 name: "order",
@@ -73,18 +74,19 @@ const routes = [{
                     icon: "orderManage",
                     index : "3-2"
                 },
-                component: () => import("./router/order")
+                component: () => import("./views/order")
             }
         ]
     },
     {
         path: "/login",
-        component: () => import("./router/login")
+        component: () => import("./views/login")
     },
 ];
 
 const router = new VueRouter({
-    routes
+    routes,
+    mode : "history"
 });
 
 router.beforeEach((to, from, next) => {
@@ -100,7 +102,7 @@ router.beforeEach((to, from, next) => {
                 return val;
             }
         }).flat();
-
+        
         store.dispatch("changeMenuRoutes", menuRoutes).then(() => {
             next();
         })

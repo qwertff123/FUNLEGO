@@ -39,7 +39,6 @@ export default {
         return "";
       }
       const errorMsg = this.errorMsg;
-      console.log(errorMsg);
       if (errorMsg == null) {
         return null;
       } else if (errorMsg == "") {

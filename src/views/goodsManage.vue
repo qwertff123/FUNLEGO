@@ -36,7 +36,7 @@
           <qw-table-column prop="id" label="id" />
           <qw-table-column prop="title" label="标题" />
           <qw-table-column prop="price" label="价格" />
-          <qw-table-column prop="sale" label="销售量" />
+          <qw-table-column prop="sales" label="销售量" />
           <qw-table-column prop="inventory" label="库存量" />
           <qw-table-column label="操作" #default="{ rowData }">
             <div class="operate">
@@ -67,46 +67,10 @@
           :callback="cbChangePage"
         ></change-page>
       </div>
-      <div class="info" v-show="isShowInfo">
-        <div class="back" @click="isShowInfo = !isShowInfo">返回</div>
-        <div class="card" v-if="goodsDetail">
-          <div class="id">ID : {{ goodsDetail.id }}</div>
-          <div class="top">
-            <div class="img">
-              <img :src="goodsDetail.images[0]" alt="" />
-            </div>
-            <div class="base-info">
-              <div
-                class="item"
-                :class="{ long: item.type == 'long' }"
-                v-for="item in renderGoodsInfo"
-                :key="item.id"
-              >
-                <span class="title">{{ item.title }}</span>
-                <span class="content" v-if="!item.badage">
-                  {{ item.content || "无" }}
-                </span>
-                <span class="content" v-else>
-                  <i class="badge" v-for="icon in item.content" :key="icon">{{
-                    icon
-                  }}</i>
-                </span>
-              </div>
-              <div class="item status" v-if="goodsDetail">
-                <span class="content">
-                  <span class="content">
-                    <i class="badge success" v-if="goodsDetail.status"
-                      >已上架</i
-                    >
-                    <i class="badge error" v-else>未上架</i>
-                  </span>
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="sale-info"></div>
-        </div>
-      </div>
+      
+      <!-- 商品详情卡片 -->
+      <goods-card v-if="isShowInfo" :goods="goodsDetail" :onback="()=>isShowInfo = !isShowInfo"></goods-card>
+
       <div class="edit" v-if="isEdit">
         <div class="back" @click="isEdit = false">返回</div>
         <div class="card">
@@ -424,6 +388,10 @@ import { deepClone, getBase64 } from "@/util";
 //导入与商品有关的接口
 import * as api from "@/api/goods";
 
+//导入商品信息卡片组件
+import goodsCard from "@/components/goodsCard.vue";
+
+
 export default {
   components: {
     // tableCmp,
@@ -436,6 +404,7 @@ export default {
 
     //引入表格组件
     ...tableComponent,
+    goodsCard
   },
   data() {
     return {
@@ -499,39 +468,25 @@ export default {
   },
   methods: {
     //用于初始化所需要的数据
-    initData() {
-      api.getGoodsList("qwertff_1618500498552").then((data) => {
-        if (data.status != "success") {
-          throw new Error(data.msg);
-        }
-        this.goodsList = data.data.data;
-        this.pageSize = Math.ceil(data.data.total / this.maxAmount);
-        //   console.log(this.goodsList.data.slice(0, 4));
-        this.tableData = this.goodsListSlice();
-      });
+    async initData() {
+      const result = await api.getGoodsList(this.curPage, this.maxAmount);
+      if (result.status != "success") {
+        throw new Error(result.msg);
+      }
+      this.goodsList = result.data.rows;
+      this.pageSize = Math.ceil(result.data.count / this.maxAmount);
+      this.tableData = this.goodsList;
     },
     /**
      * 换页时调用的回掉函数
      */
-    cbChangePage(num) {
+    async cbChangePage(num) {
       this.curPage = num;
+      /* 当换页时即时更新tbody中的数据 */
+      const result = await api.getGoodsList(this.curPage, this.maxAmount);
+      this.goodsList = result.data.rows;
+      this.tableData = result.data.rows;
     },
-    /**
-     * 用于通过当前的页码与单页最大展示的数据数量，截取展示相应的数据
-     */
-    goodsListSlice() {
-      const goodsList = this.goodsList;
-      const start = (this.curPage - 1) * this.maxAmount;
-      let end = this.curPage * this.maxAmount;
-      end = end > this.goodsList.length ? this.goodsList.length : end;
-      const result = [];
-      for (let i = start; i < end; ++i) {
-        result.push(goodsList[i]);
-      }
-      // return this.getTbody(result);
-      return result;
-    },
-
     edit(data) {
       api
         .getGoodsDetail({
@@ -561,42 +516,38 @@ export default {
     },
 
     showInfo(data) {
-      api
-        .getGoodsDetail({
-          id: data.id,
-          appkey: "qwertff_1618500498552",
-        })
-        .then((data) => {
-          this.goodsDetail = data.data;
-          this.renderGoodsInfo = this.getRenderGoodsInfo();
-          this.isShowInfo = true;
-        });
+
+      const id = data.id;
+      const result = this.goodsList.find(val=>val.id === id);
+      this.goodsDetail = result;
+      // this.renderGoodsInfo = this.getRenderGoodsInfo();
+      this.isShowInfo = true;
     },
 
     /**
      * 用于获取详细页所需要渲染的页面
      */
-    getRenderGoodsInfo() {
-      const showInfoKeys = this.showInfoKeys;
-      const goodsDetail = this.goodsDetail;
-      const result = [];
-      for (const key in showInfoKeys) {
-        const obj = {};
-        //如果有配置对象
-        if (typeof showInfoKeys[key] == "object") {
-          const options = showInfoKeys[key];
-          obj.title = options.title;
-          obj.type = options.type ? options.type : "short";
-          obj.badage = options.badage || false;
-          obj.content = goodsDetail[key];
-        } else {
-          obj.title = showInfoKeys[key];
-          obj.content = goodsDetail[key];
-        }
-        result.push(obj);
-      }
-      return result;
-    },
+    // getRenderGoodsInfo() {
+    //   const showInfoKeys = this.showInfoKeys;
+    //   const goodsDetail = this.goodsDetail;
+    //   const result = [];
+    //   for (const key in showInfoKeys) {
+    //     const obj = {};
+    //     //如果有配置对象
+    //     if (typeof showInfoKeys[key] == "object") {
+    //       const options = showInfoKeys[key];
+    //       obj.title = options.title;
+    //       obj.type = options.type ? options.type : "short";
+    //       obj.badage = options.badage || false;
+    //       obj.content = goodsDetail[key];
+    //     } else {
+    //       obj.title = showInfoKeys[key];
+    //       obj.content = goodsDetail[key];
+    //     }
+    //     result.push(obj);
+    //   }
+    //   return result;
+    // },
     //修改----提交修改结果至服务端
     submit() {
       this.form.updateTime = Date();
@@ -673,11 +624,6 @@ export default {
     },
   },
   watch: {
-    /* 当换页时即时更新tbody中的数据 */
-    curPage() {
-      this.tableData = this.goodsListSlice();
-    },
-
     "form.category"() {
       const category_id = this.form.category;
       this.c_items_list = this.categoryInfo.find(
@@ -697,15 +643,15 @@ export default {
   created() {
     window.vm = this;
     this.initData();
-    api.getCategoryInfo("qwertff_1618500498552").then((data) => {
-      this.categoryInfo = data.data.data;
-      this.categoryList = this.categoryInfo.map((val) => {
-        return {
-          name: val.name,
-          id: val.id,
-        };
-      });
-    });
+    // api.getCategoryInfo("qwertff_1618500498552").then((data) => {
+    //   this.categoryInfo = data.data.data;
+    //   this.categoryList = this.categoryInfo.map((val) => {
+    //     return {
+    //       name: val.name,
+    //       id: val.id,
+    //     };
+    //   });
+    // });
   },
 };
 </script>

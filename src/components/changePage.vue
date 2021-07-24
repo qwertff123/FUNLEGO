@@ -7,6 +7,7 @@
           v-for="num in pageSize"
           :key="num"
           :class="{ active: num == pageSelected }"
+          @click="change(num)"
         >
           {{ num }}
         </li>

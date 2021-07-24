@@ -5,7 +5,7 @@
         <qw-form
           @submit="login"
           v-if="status == 'login'"
-          :rules="filterObj(rules,['email','password'])"
+          :rules="filterObj(rules, ['email', 'password'])"
           v-model="form"
           :key="1"
         >
@@ -13,19 +13,19 @@
           <qw-input v-model="form.email" prop="email" placeholder="请输入邮箱">
             <i class="iconfont email"></i>
           </qw-input>
-          <qw-input v-model="form.password" prop="password" placeholder="请输入密码">
+          <qw-input
+            v-model="form.password"
+            prop="password"
+            placeholder="请输入密码"
+          >
             <i class="iconfont password"></i>
           </qw-input>
-          <div class="find-password" @click="status = 'findPassword'">
-            <span>忘记密码?</span>
+          <div class="find-password">
+            <span @click="status = 'findPassword'">忘记密码?</span>
           </div>
 
           <div class="bottom">
-            <qw-button
-              class="active"
-              type="submit"
-              label="登录"
-            ></qw-button>
+            <qw-button class="active" type="submit" label="登录"></qw-button>
             <qw-button
               class="normal no-active float-right"
               label="注册"
@@ -50,7 +50,12 @@
             <i class="iconfont username"></i>
           </qw-input>
 
-          <qw-input v-model="form.email" placeholder="请输入邮箱" prop="email" :key="10022">
+          <qw-input
+            v-model="form.email"
+            placeholder="请输入邮箱"
+            prop="email"
+            :key="10022"
+          >
             <i class="iconfont email"></i>
           </qw-input>
           <qw-input
@@ -157,8 +162,8 @@ export default {
       status: "login",
       form: {
         username: "",
-        email: "1648494263@qq",
-        password: "1234",
+        email: "1648494263@qq.com",
+        password: "1648494263",
         passwordConfirm: "",
         code: "",
       },
@@ -201,17 +206,21 @@ export default {
         console.log(data);
       });
     },
-    login() {
+    async login() {
       const { email, password } = this.form;
-      api.login({ email, password }).then((result) => {
-        if (result.status == "fail") {
-          alert(result.msg);
-        } else {
-          alert("登录成功");
-          window.document.cookie = "appkey=" + result.data.appkey;
-          this.$router.push("/");
-        }
+      const result = await this.$store.dispatch("login",{
+        email,
+        password
       });
+      if(result.status == "error"){
+        console.log(result.msg);
+      }else{
+        const userInfo = result.data;
+        console.log(result);
+        //将token存放至localstore中
+        window.localStorage.setItem("token",userInfo.token);
+        this.$router.push("/");
+      }
     },
     register() {
       console.log("注册了");
@@ -231,7 +240,7 @@ export default {
         console.log(data);
       });
     },
-    filterObj
+    filterObj,
   },
   mounted() {
     window.vm = this;

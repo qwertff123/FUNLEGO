@@ -8,9 +8,14 @@ import "./assets/css/iconfont.css"
 
 //导入vuex
 import store from "./store";
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+store.dispatch("whoami");
+
 new Vue({
   router,
   store,
   render: h => h(App),
-}).$mount('#app')
+}).$mount('#app');
+
+

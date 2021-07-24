@@ -5,14 +5,16 @@
         </a>
         <div class="user-info">
             <img class="user-icon" src="../assets/user.webp"/>
-            <span class="nickname">qwertff</span>
+            <span class="nickname">{{ this.$store.state.userInfo.nickname }}</span>
             <i class="iconfont drap-arrow"></i>
         </div>
     </div>
 </template>
 <script>
 export default {
-    
+    // mounted(){
+    //     console.log(this.$store.state)
+    // }
 }
 </script>
 <style scoped lang="less">

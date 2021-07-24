@@ -16,16 +16,18 @@ export function getCode(data) {
 }
 
 /**
- * 用于用户登录
- * 参数为邮箱与密码
- * 
+ * 用户登录
+ * @param {*} email 邮箱
+ * @param {*} password 密码
+ * @returns 
  */
-export function login(data){
+export function login(email,password){
     return axios({
         method: "post",
-        url: "/passport/login",
+        url: "/api/login",
         data: {
-          ...data
+          email,
+          password
         },
       });
 }
@@ -43,6 +45,20 @@ export function register(data){
         },
       })
 }
+
+/**
+ * 利用token换取身份信息
+ * @param {*} data 
+ * @returns 
+ */
+export function whoami(){
+  return axios({
+    method : "get",
+    url : "/api/whoami",
+  })
+}
+
+
 /**
  * 找回密码
  * 参数为邮箱，密码，验证码

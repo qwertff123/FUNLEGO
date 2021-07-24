@@ -2,15 +2,16 @@ import axios from "../axios";
 
 /**
  * 得到请求过来的商品数据
- * @param { String } appkey
  * @return promise对象
  */
-export function getGoodsList(appkey) {
+export function getGoodsList(page=1,limit=5) {
+    
     return axios({
         methods: "get",
-        url: "/products/all",
+        url: "/api/goods",
         params: {
-            appkey
+            page,
+            limit
         },
     });
 }
