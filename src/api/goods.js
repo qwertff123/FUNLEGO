@@ -35,6 +35,35 @@ export function getGoodsDetail({
 }
 
 /**
+ * 根据商品Id获取商品的链接
+ * @param {*} id 
+ * @returns 
+ */
+export function getImgSrc(goodsId){
+    return axios({
+        method : "get",
+        url : "/api/img",
+        params : {
+            goodsId
+        }
+    })
+}
+
+/**
+ * 根据商品Id获取商品标签
+ * @param {*} goodsId 
+ */
+export function getTags(goodsId){
+    return axios({
+        method : "get",
+        url : "/api/tag",
+        params : {
+            goodsId
+        }
+    })
+}
+
+/**
  * 移除指定id的商品信息
  * @param {*} id 
  */

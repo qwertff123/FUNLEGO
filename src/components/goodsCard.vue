@@ -5,7 +5,7 @@
       <div class="id">ID : {{ goods.id }}</div>
       <div class="top">
         <div class="img">
-          <!-- <img :src="goodsDetail.images[0]" alt="" /> -->
+          <img :src="goods.images[0]" alt="" />
         </div>
         <div class="base-info">
           <div class="item long">
@@ -13,15 +13,21 @@
             <span class="content">
               {{ goods.title }}
             </span>
-            <!-- <span class="content" v-else>
-              <i class="badge" v-for="icon in item.content" :key="icon">{{
-                icon
-              }}</i>
-            </span> -->
           </div>
           <div class="item long">
             <span class="title">描述</span>
             <span class="content">{{ goods.desc }}</span>
+          </div>
+          <div class="item long">
+            <span class="title">标签名</span>
+            <span class="content">
+              <template v-if="goods.tags.length">
+                <i class="badge" v-for="tag in goods.tags" :key="tag">{{
+                  tag
+                }}</i>
+              </template>
+              <span class="empty" v-else>空空如也</span>
+            </span>
           </div>
           <div class="item">
             <span class="title">价格</span>
@@ -62,12 +68,12 @@ export default {
       require: true,
     },
     //点击返回按钮时所触发的事件
-    onback : {
-        type : Function,
-        default : ()=>{
-            return ()=>{}
-        }
-    }
+    onback: {
+      type: Function,
+      default: () => {
+        return () => {};
+      },
+    },
   },
 };
 </script>
@@ -199,6 +205,10 @@ export default {
             border-bottom-right-radius: 15px;
             font-weight: 700;
 
+            .empty {
+              color: #ccc;
+            }
+            
             .badge {
               display: inline-block;
               font-style: normal;

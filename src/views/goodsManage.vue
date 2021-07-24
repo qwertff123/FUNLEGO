@@ -386,7 +386,7 @@ import carouselCompinent from "@/components/carouselComponent";
 import { deepClone, getBase64 } from "@/util";
 
 //导入与商品有关的接口
-import * as api from "@/api/goods";
+import * as goodsApi from "@/api/goods";
 
 //导入商品信息卡片组件
 import goodsCard from "@/components/goodsCard.vue";
@@ -414,24 +414,6 @@ export default {
       goodsList: null, //商品信息
       goodsDetail: null, //单个商品的详细信息
       //需要展示在详细信息页面的与键值对应的标题（需要与服务端请求回来的数据要相匹配）
-      showInfoKeys: {
-        title: {
-          title: "标题",
-          type: "long",
-        },
-        desc: {
-          title: "描述",
-          type: "long",
-        },
-        category: "类别",
-        c_item: "子类别",
-        tags: {
-          title: "标签",
-          badage: true,
-        },
-        price: "价格",
-        price_off: "折扣价",
-      },
       isShowInfo: false, //是否展示商品的详细信息
       isEdit: false, //是否编辑商品信息
       isAdd: false, //是否处于添加商品信息
@@ -469,7 +451,7 @@ export default {
   methods: {
     //用于初始化所需要的数据
     async initData() {
-      const result = await api.getGoodsList(this.curPage, this.maxAmount);
+      const result = await goodsApi.getGoodsList(this.curPage, this.maxAmount);
       if (result.status != "success") {
         throw new Error(result.msg);
       }
@@ -483,12 +465,12 @@ export default {
     async cbChangePage(num) {
       this.curPage = num;
       /* 当换页时即时更新tbody中的数据 */
-      const result = await api.getGoodsList(this.curPage, this.maxAmount);
+      const result = await goodsApi.getGoodsList(this.curPage, this.maxAmount);
       this.goodsList = result.data.rows;
       this.tableData = result.data.rows;
     },
     edit(data) {
-      api
+      goodsApi
         .getGoodsDetail({
           id: data.id,
           appkey: "qwertff_1618500498552",
@@ -509,18 +491,23 @@ export default {
     },
     remove(data) {
       if (confirm("确认要删除吗")) {
-        api.removeGoods(data.id).then(() => {
+        goodsApi.removeGoods(data.id).then(() => {
           this.initData();
         });
       }
     },
-
-    showInfo(data) {
-
-      const id = data.id;
-      const result = this.goodsList.find(val=>val.id === id);
-      this.goodsDetail = result;
-      // this.renderGoodsInfo = this.getRenderGoodsInfo();
+    /**
+     * 点击单行时触发的事件处理函数
+     */
+    async showInfo(data) {
+      const goodsId = data.id;
+      const goodsInfo = this.goodsList.find(val=>val.id === goodsId);
+      const images = await goodsApi.getImgSrc(goodsId);
+      const tags = await goodsApi.getTags(goodsId);
+      //向商品信息分别注入图片链接与标签名
+      goodsInfo.images = images.data;
+      goodsInfo.tags = tags.data;
+      this.goodsDetail = goodsInfo;
       this.isShowInfo = true;
     },
 
@@ -551,13 +538,13 @@ export default {
     //修改----提交修改结果至服务端
     submit() {
       this.form.updateTime = Date();
-      api
+      goodsApi
         .editGoods({
           appkey: "qwertff_1618500498552",
           ...this.form,
         })
         .then(() => {
-          return api.getGoodsList("qwertff_1618500498552");
+          return goodsApi.getGoodsList("qwertff_1618500498552");
         })
         .then((data) => {
           if (data.status != "success") {
@@ -593,7 +580,7 @@ export default {
 
     //添加-----添加商品，将商品数据发送至服务端
     addGoods() {
-      api
+      goodsApi
         .addGoods({
           appkey: "qwertff_1618500498552",
           ...this.formAddGoods,
@@ -643,7 +630,7 @@ export default {
   created() {
     window.vm = this;
     this.initData();
-    // api.getCategoryInfo("qwertff_1618500498552").then((data) => {
+    // goodsApi.getCategoryInfo("qwertff_1618500498552").then((data) => {
     //   this.categoryInfo = data.data.data;
     //   this.categoryList = this.categoryInfo.map((val) => {
     //     return {
