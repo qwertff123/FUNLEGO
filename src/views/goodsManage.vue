@@ -67,11 +67,21 @@
           :callback="cbChangePage"
         ></change-page>
       </div>
-      
-      <!-- 商品详情卡片 -->
-      <goods-card v-if="isShowInfo" :goods="goodsDetail" :onback="()=>isShowInfo = !isShowInfo"></goods-card>
 
-      <div class="edit" v-if="isEdit">
+      <!-- 商品详情卡片 -->
+      <goods-card
+        v-if="isShowInfo"
+        :goods="goodsDetail"
+        :onback="() => (isShowInfo = !isShowInfo)"
+      ></goods-card>
+
+      <goods-modify
+        :goods="goodsDetail"
+        v-if="isEdit"
+        :onback="() => (isEdit = !isEdit)"
+        @submit="updateGoods"
+      ></goods-modify>
+      <!-- <div class="edit" v-if="isEdit">
         <div class="back" @click="isEdit = false">返回</div>
         <div class="card">
           <div class="id">ID : {{ goodsDetail.id }}</div>
@@ -207,8 +217,8 @@
             </div>
           </qw-form>
         </div>
-      </div>
-      <div class="edit add" v-if="isAdd">
+      </div> -->
+      <!-- <div class="edit add" v-if="isAdd">
         <div class="back" @click="isAdd = false">返回</div>
         <div class="card">
           <qw-form class="form" @submit="addGoods">
@@ -364,7 +374,7 @@
             </div>
           </qw-form>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -391,7 +401,8 @@ import * as goodsApi from "@/api/goods";
 //导入商品信息卡片组件
 import goodsCard from "@/components/goodsCard.vue";
 
-
+//导入商品编辑卡片组件
+import goodsModify from "@/components/goodsModify.vue";
 export default {
   components: {
     // tableCmp,
@@ -404,7 +415,8 @@ export default {
 
     //引入表格组件
     ...tableComponent,
-    goodsCard
+    goodsCard,
+    goodsModify,
   },
   data() {
     return {
@@ -420,31 +432,31 @@ export default {
       renderGoodsInfo: {}, //用作渲染详细页的数据
       categoryInfo: {}, //得到所有类目信息
       //用于form双向数据绑定的数据
-      form: {},
-      //用于初次进入修改界面的所有数据，方便后续的重置
-      formCache: {},
-      //用于添加商品的表单
-      formAddGoods: {
-        title: "",
-        desc: "",
-        category: "",
-        c_items: "",
-        tags: "",
-        price: "",
-        price_off: "",
-        unit: "",
-        status: "",
-        images: "",
-        inventory: "",
-      },
+      // form: {},
+      // //用于初次进入修改界面的所有数据，方便后续的重置
+      // formCache: {},
+      // //用于添加商品的表单
+      // formAddGoods: {
+      //   title: "",
+      //   desc: "",
+      //   category: "",
+      //   c_items: "",
+      //   tags: "",
+      //   price: "",
+      //   price_off: "",
+      //   unit: "",
+      //   status: "",
+      //   images: "",
+      //   inventory: "",
+      // },
       //用于记录所有的category,只得到所有类目对应的id及其名字的信息
       categoryList: [],
       //根据category记录所属子类
       c_items_list: [],
       //tag
       tag: "",
-      //当前展示的图片的索引
-      curImgIndex: 0,
+      // //当前展示的图片的索引
+      // curImgIndex: 0,
       tableData: [],
     };
   },
@@ -469,25 +481,24 @@ export default {
       this.goodsList = result.data.rows;
       this.tableData = result.data.rows;
     },
-    edit(data) {
-      goodsApi
-        .getGoodsDetail({
-          id: data.id,
-          appkey: "qwertff_1618500498552",
-        })
-        .then((data) => {
-          this.goodsDetail = data.data;
-          console.log(this.goodsDetail);
-          /* eslint-disable no-unused-vars */
+    async edit(data) {
+      const goodsId = data.id;
+      const goodsInfo = this.goodsList.find((val) => val.id === goodsId);
+      const images = await goodsApi.getImgSrc(goodsId);
+      const tags = await goodsApi.getTags(goodsId);
+      goodsInfo.images = images.data;
+      goodsInfo.tags = tags.data;
+      console.log(goodsInfo);
+      this.goodsDetail = goodsInfo;
+      /* eslint-disable no-unused-vars */
 
-          this.form = this.goodsDetail;
-          //保存初始的form表单数据
-          this.formCache = deepClone(this.form);
+      // this.form = this.goodsDetail;
+      // //保存初始的form表单数据
+      // this.formCache = deepClone(this.form);
 
-          this.renderGoodsInfo = this.getRenderGoodsInfo();
-          this.isEdit = true;
-          console.log(this.isEdit);
-        });
+      // this.renderGoodsInfo = this.getRenderGoodsInfo();
+      this.isEdit = true;
+      console.log(this.isEdit);
     },
     remove(data) {
       if (confirm("确认要删除吗")) {
@@ -501,7 +512,7 @@ export default {
      */
     async showInfo(data) {
       const goodsId = data.id;
-      const goodsInfo = this.goodsList.find(val=>val.id === goodsId);
+      const goodsInfo = this.goodsList.find((val) => val.id === goodsId);
       const images = await goodsApi.getImgSrc(goodsId);
       const tags = await goodsApi.getTags(goodsId);
       //向商品信息分别注入图片链接与标签名
@@ -558,6 +569,12 @@ export default {
 
           this.isEdit = false;
         });
+    },
+    /**
+     * 修改商品信息
+     */
+    updateGoods(goods){
+      console.log(goods);
     },
     //修改----添加图片
     //参数1：用于上传文件的表单元素

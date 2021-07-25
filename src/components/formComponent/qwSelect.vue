@@ -38,7 +38,7 @@ export default {
     event: "change",
   },
   props: ["label", "placeholder", "prop", "value", "watch"],
-  inject : ["totalRules"],
+  inject: ["totalRules"],
   data() {
     return {
       isDrap: false,
@@ -52,7 +52,7 @@ export default {
   },
   watch: {
     watch() {
-      console.log("检测到某值得改变")
+      console.log("检测到某值得改变");
       requestAnimationFrame(() => {
         this.initoptionsInfo();
         this.$emit("change", "");
@@ -99,7 +99,9 @@ export default {
       this.$emit("change", value);
     });
 
-    this.initoptionsInfo();
+    this.$on("update", (optionInfo) => {
+      this.optionsInfo.push(optionInfo);
+    });
 
     //注册用于校验本表单的事件
     this.rules &&
@@ -140,15 +142,6 @@ export default {
   methods: {
     changeStatus() {
       this.optionsInfo.length && (this.isDrap = !this.isDrap);
-    },
-    //用于得到qw-option组件中的value与其插槽内的内容
-    initoptionsInfo() {
-      const children = this.$children;
-      const result = [];
-      for (const key in children) {
-        result.push(children[key].optionInfo);
-      }
-      this.optionsInfo = result;
     },
     up(el) {
       this.slide.up(el);

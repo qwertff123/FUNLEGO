@@ -64,6 +64,17 @@ export function getTags(goodsId){
 }
 
 /**
+ * 获取商品的所有类别
+ * @returns 
+ */
+export function getAllCategory(){
+    return axios({
+        method : "get",
+        url : "/api/getAllCategory"
+    })
+}
+
+/**
  * 移除指定id的商品信息
  * @param {*} id 
  */

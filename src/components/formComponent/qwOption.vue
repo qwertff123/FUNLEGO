@@ -15,7 +15,7 @@ export default {
     handleClick() {
       //触发父组件上的selected方法
       //向父组件传递value
-      console.log(this.value,"666");
+      console.log(this.value);
       this.$parent.$emit("selected", this.value);
     },
   },
@@ -24,7 +24,7 @@ export default {
       value: this.value,
       innerText: this.$slots.default[0].text,
     };
-    
+    this.$parent.$emit("update",this.optionInfo);
   },
   computed: {
     selected() {
