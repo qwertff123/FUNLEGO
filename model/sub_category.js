@@ -5,10 +5,10 @@ const SubCategory = sequelize.define("sub_category",{
          type : DataTypes.STRING,
          allowNull : false
      },
-     categoryId : {
-         type : DataTypes.INTEGER,
-         allowNull : false
-     }
+     categoryName : {
+        type : DataTypes.STRING,
+        allowNull : false
+    }
 });
 
 module.exports = SubCategory;

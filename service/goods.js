@@ -1,9 +1,10 @@
 const Goods = require("../model/goods");
 const Category = require("../model/category");
 const SubCategory = require("../model/sub_category");
+const Tag = require("../model/tag");
 const sequelize = require("../model/sequelize");
 const Sequelize = require("sequelize");
-const Tag = require("../model/tag");
+
 /**
  * 每一件商品都对应着一个用户的username
  * 得到商品商品信息
@@ -28,9 +29,7 @@ exports.getGoods = async function (username, page, limit) {
             //使用Sequelize.col手动引入联表引入的属性并为其取别名
             include: [
                 [Sequelize.col("sub_category.name"), "subCategory"],
-                [Sequelize.col("sub_category.categoryId"), "categoryId"],
                 [Sequelize.col("sub_category.category.name"), "category"]
-  
             ]
             // include : ["category.name"]
         },
@@ -39,7 +38,7 @@ exports.getGoods = async function (username, page, limit) {
         },
         limit: +limit,
         offset: (page - 1) * limit,
-        raw: true //finder的结果默认都为model的示例，可以将raw设置为true，则将返回正常的结果
+        // raw: true //finder的结果默认都为model的示例，可以将raw设置为true，则将返回正常的结果
     });
 }
 

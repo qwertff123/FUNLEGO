@@ -42,10 +42,14 @@ router.post("/register", async (req, res, next) => {
         password,
         code
     } = req.body;
-    if (!req.session.code || req.session.code.expires < Date.now()) {
+    if(!req.session.code){
+        return next(Error("未获取验证码"))
+    }
+    if (req.session.code.expires < Date.now()) {
         //验证码失效，需要重新获取
         return next(Error("验证码失效"));
     }
+   
     if (code == req.session.code.value) {
         //验证码正确后创建用户
         try {
@@ -70,7 +74,7 @@ router.get("/getCode", (req, res, next) => {
     const email = req.query.email;
     const code = random(100000, 999999);
     req.session.code = {
-        expires: Date.now() + 1000 * 60 * 5, //过期时间为5分钟
+        expires: Date.now() + 1000 * 60 * 60, //过期时间为60分钟
         // value: code //验证码取6位小数
         value: 666666
     };

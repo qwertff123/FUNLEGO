@@ -9,6 +9,6 @@ const Img = require("../model/img");
         where : {
             goodsId
         },
-        attributes : ["src"]
+        attributes : ["id","src"]
     })
 }

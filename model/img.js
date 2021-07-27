@@ -7,6 +7,10 @@ const Img = sequelize.define("img",{
     src : {
         type : DataTypes.STRING(1000),
         allowNull : false
+    },
+    goodsId : {
+        type : DataTypes.INTEGER,
+        allowNull : false
     }
 });
 

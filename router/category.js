@@ -10,7 +10,7 @@ router.get("/getAllCategory",async (req,res)=>{
     const result = await categoryOpt.getAllCategory();
     res.send({
         status : "success",
-        data : result
+        data : result.map(val=>val.name)
     })
 });
 
@@ -18,9 +18,9 @@ router.get("/getAllCategory",async (req,res)=>{
  * 获取一个类别下的所有子类别
  */
 router.get("/getSubCategory",async (req,res)=>{
-    const categoryId = req.query.categoryId;
-    console.log(categoryId);
-    const result = await categoryOpt.getSubCategory(categoryId);
+    const category = req.query.category;
+    console.log(category);
+    const result = await categoryOpt.getSubCategory(category);
     res.send({
         status : "success",
         data : result

@@ -38,13 +38,13 @@ const Goods = sequelize.define("goods", {
     },
     // categoryId: {
     //     type: DataTypes.INTEGER,
-    //     allowNull: false
-    
+    //     allowNull: false 
     // },
     username: {
         type: DataTypes.STRING,
         allowNull: false
     },
+    
     subCategoryId : {
         type : DataTypes.INTEGER,
         allowNull : false

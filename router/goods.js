@@ -2,6 +2,7 @@ const express = require("express");
 const Goods = require("../model/goods");
 const router = express.Router();
 const goodsOpt = require("../service/goods");
+const tagOpt = require("../service/tag");
 
 /**
  * 获取商品
@@ -10,7 +11,8 @@ router.get("/goods",async (req,res)=>{
     const username = req.username;
     const { page=1,limit=5 } = req.query;
     const result = await goodsOpt.getGoods(username,page,limit);
-
+    console.log(username);
+    // console.log(result.issale)
     res.send({
         status : "success",
         data : result
@@ -42,7 +44,9 @@ router.put("/goods",async (req,res)=>{
         throw Error("必须提供商品Id")
     }
     const username = req.username;
-    await goodsOpt.updateGoods(username,info.id,info)
+    //更改商品信息
+    await goodsOpt.updateGoods(username,info.id,info);
+    await tagOpt.updateGoodsTags(info.id,info.tags);
     res.send({
         status : "success",
         msg : "修改成功",

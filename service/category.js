@@ -14,12 +14,12 @@ exports.getAllCategory = async function(){
 
 /**
  * 获取类目下的所有子类目
- * @param {*} categoryId 类目Id
+ * @param {*} category 类目
  */
-exports.getSubCategory = async function(categoryId){
+exports.getSubCategory = async function(category){
     return await SubCategory.findAll({
         where :{
-            categoryId
+            categoryName : category
         },
         attributes : ["name","id"]
     })
