@@ -1,11 +1,12 @@
 <template>
   <div class="info">
-    <div class="back" @click="onback">返回</div>
+    <div class="back" @click="back">返回</div>
     <div class="card" v-if="goods">
       <div class="id">ID : {{ goods.id }}</div>
       <div class="top">
         <div class="img">
-          <img :src="goods.images[0]" alt="" />
+          <img :src="goods.images[0].src" alt="" v-if="goods.images.length > 0"/>
+          <div v-else>空空如也</div>
         </div>
         <div class="base-info">
           <div class="item long">
@@ -61,20 +62,32 @@
   </div>
 </template>
 <script>
+import * as goodsApi from "@/api/goods"
 export default {
   props: {
-    //商品信息
-    goods: {
+    goodsId: {
+      type: Number,
       require: true,
     },
-    //点击返回按钮时所触发的事件
-    onback: {
-      type: Function,
-      default: () => {
-        return () => {};
-      },
-    },
   },
+  data() {
+    return {
+      goods: null,
+    };
+  },
+  async created() {
+    const goodsId = this.goodsId;
+    const goodsInfo = (await goodsApi.getGoodsById(goodsId)).data;
+    goodsInfo.images = (await goodsApi.getImgSrc(goodsId)).data;
+    goodsInfo.tags = (await goodsApi.getTags(goodsId)).data;
+    //向商品信息分别注入图片链接与标签名
+    this.goods = goodsInfo;
+  },
+ methods : {
+    back(){
+    this.$emit("back");
+  } 
+ }
 };
 </script>
 <style scoped lang="less">
@@ -208,7 +221,7 @@ export default {
             .empty {
               color: #ccc;
             }
-            
+
             .badge {
               display: inline-block;
               font-style: normal;

@@ -9,7 +9,7 @@
         @input="$emit('input', $event.target.value)"
         ref="input"
       />
-      <i class="iconfont" :class="['status',vertifyClass]"></i>
+      <i class="iconfont" :class="['status', vertifyClass]"></i>
     </div>
 
     <div class="error-msg">
@@ -24,7 +24,18 @@ export default {
     prop: "value",
     event: "input",
   },
-  props: ["placeholder", "value", "prop", "type"],
+  props: {
+    placeholder: {},
+    value: {},
+    prop: {},
+    type: {},
+    icon: {
+      //用于标识该输入框是否有图标
+      type: Boolean,
+      default: false,
+    },
+  },
+
   inject: ["totalRules"],
   data() {
     return {
@@ -58,6 +69,9 @@ export default {
     }
   },
   mounted() {
+    if (this.icon) {
+      this.$refs.input.style.paddingLeft = "30px";
+    }
     //用户交互时触发的表单的校验
     this.rules &&
       registerVertifyEvent({
@@ -97,12 +111,14 @@ export default {
 .qw-input {
   position: relative;
   border: 1px solid #eee;
-  
+  width:100%;
+
   &.error {
     border: 1px solid #f56c6c;
 
     input {
       padding-right: 30px;
+      box-sizing: border-box;
     }
   }
 
@@ -127,16 +143,20 @@ export default {
     bottom: 0;
     right: 0;
     display: flex;
+    // width:100%;
   }
 
   input {
     background-color: transparent;
     position: absolute;
-    width:100%;
-    top:0;
-    bottom:0;
+    top: 0;
+    bottom: 0;
+    left:0;
+    right:0;
     box-sizing: border-box;
-    padding-left:30px;
+    // padding-left: 10px;
+    width:100%;
+    text-align: inherit;
   }
   i {
     width: 20px;
@@ -146,9 +166,9 @@ export default {
     margin-top: -10px;
     top: 50%;
   }
-  i.status{
+  i.status {
     position: absolute;
-    right:0;
+    right: 0;
   }
 }
 </style>

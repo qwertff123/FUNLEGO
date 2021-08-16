@@ -1,38 +1,39 @@
 <template>
   <div class="goods-manage">
-    <div class="table-filter">
-      <label>
-        商品名称
-        <input type="text" />
-      </label>
-      <label>
-        商品ID
-        <input type="text" />
-      </label>
+    <!-- <div class="table-filter"> -->
+    <qw-form class="table-filter">
+      <qw-label label="商品关键字" class="condition-box">
+        <input type="text" v-model="condition.keyword" placeholder="无条件" />
+      </qw-label>
+      <qw-label label="商品类别" class="condition-box">
+        <qw-select placeholder="请选择相应种类" v-model="condition.category">
+          <qw-option v-for="item in categoryList" :value="item" :key="item">{{
+            item
+          }}</qw-option>
+        </qw-select>
+      </qw-label>
+      <!-- <qw-label label="商品子类" class="condition-box">
+        <qw-select placeholder="请选择子类" v-model="category">
+          <qw-option v-for="item in categoryList" :value="item" :key="item">{{
+            item
+          }}</qw-option>
+        </qw-select>
+      </qw-label> -->
       <div class="operation">
-        <button class="search-btn">查询</button>
-        <button class="reset-btn">重置</button>
+        <button class="search-btn" @click="search">查询</button>
+        <button class="reset-btn" @click="reset">重置</button>
       </div>
-    </div>
+    </qw-form>
+    <!-- </div> -->
     <div class="info-box">
       <div class="table">
         <div class="top">
           <span class="title">商品信息预览列表</span>
           <div class="right">
-            <i
-              class="iconfont add-goods"
-              @click="
-                () => {
-                  isAdd = true;
-                  for (const key in formAddGoods) {
-                    formAddGoods[key] = '';
-                  }
-                }
-              "
-            ></i>
+            <i class="iconfont add-goods" @click="isAdd = true"></i>
           </div>
         </div>
-        <qw-table :table-data="tableData" @selected="showInfo">
+        <qw-table :table-data="goodsList" @selected="showInfo">
           <qw-table-column prop="id" label="id" />
           <qw-table-column prop="title" label="标题" />
           <qw-table-column prop="price" label="价格" />
@@ -71,310 +72,19 @@
       <!-- 商品详情卡片 -->
       <goods-card
         v-if="isShowInfo"
-        :goods="goodsDetail"
-        :onback="() => (isShowInfo = !isShowInfo)"
+        :goodsId="goodsId"
+        @back="isShowInfo = !isShowInfo"
       ></goods-card>
 
       <goods-modify
-        :goods="goodsDetail"
+        :goodsId="goodsId"
         v-if="isEdit"
-        :onback="() => (isEdit = !isEdit)"
+        @back="isEdit = !isEdit"
         @submit="updateGoods"
       ></goods-modify>
-      <!-- <div class="edit" v-if="isEdit">
-        <div class="back" @click="isEdit = false">返回</div>
-        <div class="card">
-          <div class="id">ID : {{ goodsDetail.id }}</div>
-          <qw-form class="form" @submit="submit">
-            <div class="form-left">
-              <qw-label label="商品标题" class="item">
-                <qw-input v-model="form.title"></qw-input>
-              </qw-label>
-
-              <qw-label label="商品描述" class="item">
-                <qw-input v-model="form.desc"></qw-input>
-              </qw-label>
-
-              <div class="item">
-                <qw-label label="商品类目" class="left">
-                  <qw-select v-model="form.category">
-                    <qw-option
-                      v-for="category in categoryList"
-                      :key="category.id"
-                      :value="category.id"
-                      >{{ category.name }}</qw-option
-                    >
-                  </qw-select>
-                </qw-label>
-
-                <qw-label label="商品子类目" class="right">
-                  <qw-select
-                    v-model="form.c_item"
-                    placeholder="请选择"
-                    :watch="c_items_list"
-                  >
-                    <qw-option
-                      v-for="item in c_items_list"
-                      :key="item"
-                      :value="item"
-                      >{{ item }}</qw-option
-                    >
-                  </qw-select>
-                </qw-label>
-              </div>
-              <div class="item">
-                <qw-label label="商品价格" class="left">
-                  <qw-input class="center" v-model="form.price"></qw-input>
-                </qw-label>
-                <qw-label label="商品折扣价" class="right">
-                  <qw-input
-                    class="center"
-                    v-model="form.price_off"
-                    placeholder="请输入"
-                  ></qw-input>
-                </qw-label>
-              </div>
-              <qw-label label="商品标签" class="tags-area">
-                <qw-tags-list
-                  v-model="form.tags"
-                  placeholder="请输入标签名"
-                ></qw-tags-list>
-              </qw-label>
-            </div>
-            <div class="form-right">
-              <div class="item">
-                <qw-label label="商品单位" class="left">
-                  <qw-input class="center" v-model="form.unit"></qw-input>
-                </qw-label>
-                <qw-label label="是否上架" class="right switch">
-                  <div class="switch">
-                    <qw-switch v-model="form.status"></qw-switch>
-                  </div>
-                </qw-label>
-              </div>
-
-              <div class="item">
-                <qw-label label="库存量" class="left">
-                  <qw-input class="center" v-model="form.inventory"></qw-input>
-                </qw-label>
-                <qw-label label="销售量" class="right">
-                  <qw-input class="center" v-model="form.sale"></qw-input>
-                </qw-label>
-              </div>
-              <qw-label label="商品图片" class="">
-                <div class="image-area">
-                  <qw-carousel class="carousel">
-                    <carousel-control move="prev" class="control"
-                      >《</carousel-control
-                    >
-                    <carousel-area
-                      item-width="200"
-                      :watch="form.images"
-                      v-model="curImgIndex"
-                    >
-                      <carousel-item
-                        v-for="img in form.images"
-                        :key="img"
-                        class="carousel-item"
-                      >
-                        <img :src="img" alt="" />
-                      </carousel-item>
-                    </carousel-area>
-                    <carousel-control move="next" class="control">
-                      》</carousel-control
-                    >
-                  </qw-carousel>
-
-                  <div class="bottom">
-                    <qw-button
-                      label="添加"
-                      class="add"
-                      type="file"
-                      @change="uploadImage"
-                    ></qw-button>
-                    <qw-button
-                      label="删除"
-                      type="button"
-                      class="remove"
-                      @click="removeImage"
-                    ></qw-button>
-                  </div>
-                </div>
-              </qw-label>
-            </div>
-            <div class="operate">
-              <qw-button
-                type="submit"
-                label="修改"
-                class="btn submit"
-              ></qw-button>
-              <qw-button
-                type="button"
-                label="重置"
-                class="btn reset"
-                @click="resetForm"
-              ></qw-button>
-            </div>
-          </qw-form>
-        </div>
-      </div> -->
-      <!-- <div class="edit add" v-if="isAdd">
-        <div class="back" @click="isAdd = false">返回</div>
-        <div class="card">
-          <qw-form class="form" @submit="addGoods">
-            <div class="form-left">
-              <qw-label label="商品标题" class="item">
-                <qw-input
-                  v-model="formAddGoods.title"
-                  placeholder="请输入商品标题"
-                ></qw-input>
-              </qw-label>
-
-              <qw-label label="商品描述" class="item">
-                <qw-input
-                  v-model="formAddGoods.desc"
-                  placeholder="请输入商品描述"
-                ></qw-input>
-              </qw-label>
-
-              <div class="item">
-                <qw-label label="商品类目" class="left">
-                  <qw-select
-                    v-model="formAddGoods.category"
-                    placeholder="请选择"
-                  >
-                    <qw-option
-                      v-for="category in categoryList"
-                      :key="category.id"
-                      :value="category.id"
-                      >{{ category.name }}</qw-option
-                    >
-                  </qw-select>
-                </qw-label>
-
-                <qw-label label="商品子类目" class="right">
-                  <qw-select
-                    v-model="formAddGoods.c_item"
-                    placeholder="请选择"
-                    :watch="c_items_list"
-                  >
-                    <qw-option
-                      v-for="item in c_items_list"
-                      :key="item"
-                      :value="item"
-                      >{{ item }}</qw-option
-                    >
-                  </qw-select>
-                </qw-label>
-              </div>
-              <div class="item">
-                <qw-label label="商品价格" class="left">
-                  <qw-input
-                    class="center"
-                    v-model="formAddGoods.price"
-                    placeholder="请输入价格"
-                  ></qw-input>
-                </qw-label>
-                <qw-label label="商品折扣价" class="right">
-                  <qw-input
-                    class="center"
-                    v-model="formAddGoods.price_off"
-                    placeholder="请输入折扣价"
-                  ></qw-input>
-                </qw-label>
-              </div>
-              <qw-label label="商品标签" class="tags-area">
-                <qw-tags-list
-                  v-model="formAddGoods.tags"
-                  placeholder="请输入标签名"
-                ></qw-tags-list>
-              </qw-label>
-            </div>
-            <div class="form-right">
-              <div class="item">
-                <qw-label label="商品单位" class="left">
-                  <qw-input
-                    class="center"
-                    v-model="formAddGoods.unit"
-                    placeholder="请输入单位"
-                  ></qw-input>
-                </qw-label>
-                <qw-label label="是否上架" class="right switch">
-                  <div class="switch">
-                    <qw-switch v-model="formAddGoods.status"></qw-switch>
-                  </div>
-                </qw-label>
-              </div>
-
-              <div class="item">
-                <qw-label label="库存量" class="left">
-                  <qw-input
-                    class="center"
-                    v-model="formAddGoods.inventory"
-                    placeholder="请输入库存量"
-                  ></qw-input>
-                </qw-label>
-                <qw-label label="销售量" class="right">
-                  <qw-input
-                    class="center"
-                    v-model="formAddGoods.sale"
-                    placeholder="请输入销售量"
-                  ></qw-input>
-                </qw-label>
-              </div>
-              <qw-label label="商品图片" class="">
-                <div class="image-area">
-                  <qw-carousel class="carousel">
-                    <carousel-control move="prev" class="control"
-                      >《</carousel-control
-                    >
-                    <carousel-area
-                      class="carousel-area"
-                      item-width="200"
-                      :watch="formAddGoods.images"
-                      v-model="curImgIndex"
-                      placeholder="请添加商品图片"
-                    >
-                      <carousel-item
-                        v-for="img in formAddGoods.images"
-                        :key="img"
-                        class="carousel-item"
-                      >
-                        <img :src="img" alt="" />
-                      </carousel-item>
-                    </carousel-area>
-                    <carousel-control move="next" class="control">
-                      》</carousel-control
-                    >
-                  </qw-carousel>
-
-                  <div class="bottom">
-                    <qw-button
-                      label="添加"
-                      class="add"
-                      type="file"
-                      @change="addUploadImage"
-                    ></qw-button>
-                    <qw-button
-                      label="删除"
-                      type="button"
-                      class="remove"
-                      @click="addRemoveImage"
-                    ></qw-button>
-                  </div>
-                </div>
-              </qw-label>
-            </div>
-            <div class="operate">
-              <qw-button
-                type="submit"
-                label="添加"
-                class="btn submit"
-              ></qw-button>
-            </div>
-          </qw-form>
-        </div>
-      </div> -->
+      <goods-create v-if="isAdd" @back="isAdd = !isAdd"></goods-create>
+      <!-- <goods-modify @submit="addGoods" v-if="isAdd" :onback="() => (isAdd = !isAdd)">
+      </goods-modify> -->
     </div>
   </div>
 </template>
@@ -403,6 +113,9 @@ import goodsCard from "@/components/goodsCard.vue";
 
 //导入商品编辑卡片组件
 import goodsModify from "@/components/goodsModify.vue";
+
+import goodsCreate from "@/components/goodsCreate.vue";
+
 export default {
   components: {
     // tableCmp,
@@ -417,59 +130,39 @@ export default {
     ...tableComponent,
     goodsCard,
     goodsModify,
+    goodsCreate
   },
   data() {
     return {
       pageSize: 0, //当前总页数
-      curPage: 1, //当前页数(从0开始)
+      curPage: 1, //当前页数
       maxAmount: 5, //单页最大展示的数据数量
-      goodsList: null, //商品信息
-      goodsDetail: null, //单个商品的详细信息
+      goodsList: [], //商品信息
+      goodsId: null, //选中编辑商品的Id
       //需要展示在详细信息页面的与键值对应的标题（需要与服务端请求回来的数据要相匹配）
       isShowInfo: false, //是否展示商品的详细信息
       isEdit: false, //是否编辑商品信息
       isAdd: false, //是否处于添加商品信息
-      renderGoodsInfo: {}, //用作渲染详细页的数据
-      categoryInfo: {}, //得到所有类目信息
-      //用于form双向数据绑定的数据
-      // form: {},
-      // //用于初次进入修改界面的所有数据，方便后续的重置
-      // formCache: {},
-      // //用于添加商品的表单
-      // formAddGoods: {
-      //   title: "",
-      //   desc: "",
-      //   category: "",
-      //   c_items: "",
-      //   tags: "",
-      //   price: "",
-      //   price_off: "",
-      //   unit: "",
-      //   status: "",
-      //   images: "",
-      //   inventory: "",
-      // },
-      //用于记录所有的category,只得到所有类目对应的id及其名字的信息
-      categoryList: [],
-      //根据category记录所属子类
-      c_items_list: [],
-      //tag
-      tag: "",
-      // //当前展示的图片的索引
-      // curImgIndex: 0,
-      tableData: [],
+      // categoryInfo: {}, //得到所有类目信息
+      //筛选条件
+      condition: {
+        keyword: "",
+        category: "",
+      },
+      //当前已定的筛选条件，即已点击查询之后，所记录的筛选条件，用于为分页展示数据
+      curCondition: {},
+      categoryList: "",
+      category: "",
     };
   },
   methods: {
     //用于初始化所需要的数据
     async initData() {
       const result = await goodsApi.getGoodsList(this.curPage, this.maxAmount);
-      if (result.status != "success") {
-        throw new Error(result.msg);
-      }
       this.goodsList = result.data.rows;
       this.pageSize = Math.ceil(result.data.count / this.maxAmount);
-      this.tableData = this.goodsList;
+
+      this.categoryList = (await goodsApi.getAllCategory()).data;
     },
     /**
      * 换页时调用的回掉函数
@@ -477,28 +170,17 @@ export default {
     async cbChangePage(num) {
       this.curPage = num;
       /* 当换页时即时更新tbody中的数据 */
-      const result = await goodsApi.getGoodsList(this.curPage, this.maxAmount);
+      // const result = await goodsApi.getGoodsList(this.curPage,this.maxAmount);
+      const result = await goodsApi.getFilterGoods(
+        this.curCondition,
+        this.maxAmount,
+        this.curPage
+      );
       this.goodsList = result.data.rows;
-      this.tableData = result.data.rows;
     },
     async edit(data) {
-      const goodsId = data.id;
-      const goodsInfo = this.goodsList.find((val) => val.id === goodsId);
-      const images = await goodsApi.getImgSrc(goodsId);
-      const tags = await goodsApi.getTags(goodsId);
-      goodsInfo.images = images.data;
-      goodsInfo.tags = tags.data;
-      console.log(goodsInfo);
-      this.goodsDetail = goodsInfo;
-      /* eslint-disable no-unused-vars */
-
-      // this.form = this.goodsDetail;
-      // //保存初始的form表单数据
-      // this.formCache = deepClone(this.form);
-
-      // this.renderGoodsInfo = this.getRenderGoodsInfo();
+      this.goodsId = data.id;
       this.isEdit = true;
-      console.log(this.isEdit);
     },
     remove(data) {
       if (confirm("确认要删除吗")) {
@@ -507,118 +189,34 @@ export default {
         });
       }
     },
+
     /**
      * 点击单行时触发的事件处理函数
      */
     async showInfo(data) {
-      const goodsId = data.id;
-      const goodsInfo = this.goodsList.find((val) => val.id === goodsId);
-      const images = await goodsApi.getImgSrc(goodsId);
-      const tags = await goodsApi.getTags(goodsId);
-      //向商品信息分别注入图片链接与标签名
-      goodsInfo.images = images.data;
-      goodsInfo.tags = tags.data;
-      this.goodsDetail = goodsInfo;
+      this.goodsId = data.id;
       this.isShowInfo = true;
     },
-
+    
     /**
-     * 用于获取详细页所需要渲染的页面
+     * 修改商品信息至服务端
      */
-    // getRenderGoodsInfo() {
-    //   const showInfoKeys = this.showInfoKeys;
-    //   const goodsDetail = this.goodsDetail;
-    //   const result = [];
-    //   for (const key in showInfoKeys) {
-    //     const obj = {};
-    //     //如果有配置对象
-    //     if (typeof showInfoKeys[key] == "object") {
-    //       const options = showInfoKeys[key];
-    //       obj.title = options.title;
-    //       obj.type = options.type ? options.type : "short";
-    //       obj.badage = options.badage || false;
-    //       obj.content = goodsDetail[key];
-    //     } else {
-    //       obj.title = showInfoKeys[key];
-    //       obj.content = goodsDetail[key];
-    //     }
-    //     result.push(obj);
-    //   }
-    //   return result;
-    // },
-    //修改----提交修改结果至服务端
-    submit() {
-      this.form.updateTime = Date();
-      goodsApi
-        .editGoods({
-          appkey: "qwertff_1618500498552",
-          ...this.form,
-        })
-        .then(() => {
-          return goodsApi.getGoodsList("qwertff_1618500498552");
-        })
-        .then((data) => {
-          if (data.status != "success") {
-            throw new Error(data.msg);
-          }
-          this.goodsList = data.data.data;
-          this.pageSize = Math.ceil(data.data.total / this.maxAmount);
-          //   console.log(this.goodsList.data.slice(0, 4));
-          this.tableData = this.goodsListSlice();
-          alert("修改成功");
-
-          this.isEdit = false;
-        });
-    },
-    /**
-     * 修改商品信息
-     */
-    updateGoods(goods){
+    async updateGoods(goods) {
       console.log(goods);
-    },
-    //修改----添加图片
-    //参数1：用于上传文件的表单元素
-    //参数2:用于收集图片的数组
-    uploadImage(el) {
-      getBase64(el).then((base64) => {
-        this.form.images.push(base64);
-      });
-    },
-    //修改----删除当前所展示的图片
-    removeImage() {
-      if (confirm("确定要删除该图片吗")) {
-        this.form.images.splice(this.curImgIndex, 1);
-      }
-    },
-    //修改----重置当前表单数据
-    resetForm() {
-      this.form = deepClone(this.formCache);
+      await goodsApi.updateGoods(goods);
+      const result = await goodsApi.getFilterGoods(
+        this.curCondition,
+        this.maxAmount,
+        this.curPage
+      );
+      this.goodsList = result.data.rows;
+      console.log(this.goodsList);
+      this.isEdit = !this.isEdit;
     },
 
     //添加-----添加商品，将商品数据发送至服务端
-    addGoods() {
-      goodsApi
-        .addGoods({
-          appkey: "qwertff_1618500498552",
-          ...this.formAddGoods,
-        })
-        .then((result) => {
-          if (result.status == "fail") {
-            alert(result.msg);
-          }
-          alert("添加成功");
-          this.isAdd = false;
-          this.initData();
-        });
-    },
-    //添加------添加商品图片
-    addUploadImage(el) {
-      if (!this.formAddGoods.images) {
-        this.formAddGoods.images = [];
-      }
-      getBase64(el).then((base64) => {
-        this.formAddGoods.images.push(base64);
-      });
+    async addGoods() {
+      
     },
     //添加-------移除商品图片
     addRemoveImage() {
@@ -626,36 +224,44 @@ export default {
         this.formAddGoods.images.splice(this.curImgIndex, 1);
       }
     },
-  },
-  watch: {
-    "form.category"() {
-      const category_id = this.form.category;
-      this.c_items_list = this.categoryInfo.find(
-        (val) => val.id == category_id
-      ).c_items;
+
+    /**
+     * 根据筛选条件查询商品
+     */
+    async search() {
+      this.curPage = 1;
+      console.log(this.condition)
+      const result = await goodsApi.getFilterGoods(
+        this.condition,
+        this.maxAmount,
+        this.curPage
+      );
+      console.log(result.data)
+      const { count, rows } = result.data;
+      this.pageSize = Math.ceil(count / this.maxAmount);
+      this.goodsList = rows;
+      this.pageSize = Math.ceil(result.data.count / this.maxAmount);
+      this.curCondition = { ...this.condition };
     },
-    "formAddGoods.category"() {
-      const category_id = this.formAddGoods.category;
-      if (!category_id) {
-        return;
+    /**
+     * 重置筛选条件
+     */
+    async reset() {
+      this.curPage = 1;
+      const result = await goodsApi.getGoodsList(this.curPage, this.maxAmount);
+      const { count, rows } = result.data;
+      this.pageSize = Math.ceil(count / this.maxAmount);
+      this.goodsList = rows;
+      this.pageSize = Math.ceil(result.data.count / this.maxAmount);
+      this.curCondition = {};
+      for (const key in this.condition) {
+        this.condition[key] = "";
       }
-      this.c_items_list = this.categoryInfo.find(
-        (val) => val.id == category_id
-      ).c_items;
     },
   },
   created() {
     window.vm = this;
     this.initData();
-    // goodsApi.getCategoryInfo("qwertff_1618500498552").then((data) => {
-    //   this.categoryInfo = data.data.data;
-    //   this.categoryList = this.categoryInfo.map((val) => {
-    //     return {
-    //       name: val.name,
-    //       id: val.id,
-    //     };
-    //   });
-    // });
   },
 };
 </script>

@@ -1,0 +1,210 @@
+.flex-cloumn {
+    flex-direction: column;
+}
+
+.edit {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+
+    .back {
+        width: 50px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        background-color: rgb(88, 115, 255);
+        color: white;
+        cursor: pointer;
+
+        &:active {
+            opacity: 0.6;
+        }
+    }
+
+    .center {
+        text-align: center;
+        padding-left: 0;
+    }
+
+    .card {
+        flex: 1 1 auto;
+        width: 100%;
+        border: 1px solid rgba(101, 94, 255, 0.6);
+        box-shadow: 0 0 8px 1px rgba(101, 94, 255, 0.6);
+        border-radius: 15px;
+        margin: 0 auto;
+        padding: 20px;
+        box-sizing: border-box;
+
+        .id {
+            display: inline-block;
+            height: 30px;
+            line-height: 30px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            background-color: rgb(206, 210, 221);
+            border-radius: 5px;
+            padding: 0 20px;
+            font-weight: bolder;
+            color: white;
+        }
+
+        .form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+
+            .form-left {
+                flex: 0 0 48%;
+            }
+
+            .form-right {
+                flex: 0 0 48%;
+            }
+
+            .item {
+                display: flex;
+                margin: 15px 0;
+                height: 35px;
+                justify-content: space-between;
+
+                .qw-input {
+                    flex: 1 1 auto;
+                    text-align: center;
+                }
+
+                .left,
+                .right {
+                    flex: 0 0 45%;
+                }
+
+                .switch {
+                    margin-left: 20px;
+                    display: flex;
+                    align-items: center;
+                }
+            }
+
+            .image-area {
+                display: flex;
+                height: 300px;
+                flex-wrap: wrap;
+                box-sizing: border-box;
+                flex: 1 1 auto;
+                background-color: #fafafa;
+                position:relative;
+                .carousel {
+                    height: 260px;
+                    // flex: 1 1 auto;
+                    max-width: 500px;
+                    width: 100%;
+                    // width:320px;
+
+                    .carousel-item {
+                        width:100%;
+                        height: 260px;
+                    }
+
+                    .control {
+                        flex: 1 1 auto;
+                    }
+
+                    &.ant-carousel {
+                        .slick-slide {
+                            // text-align: center;
+                            // height: 160px;
+                            // line-height: 160px;
+                            height: 260px;
+                            overflow: hidden;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        .slick-slide img {
+                            width: 80%;
+                            max-height: 260px;
+                            border: none;
+                        }
+
+                        .custom-slick-arrow {
+                            width: 35px;
+                            height: 35px;
+                            font-size: 35px;
+                            color: #655eff;
+                            opacity: 0.3;
+                        }
+
+                        .custom-slick-arrow:before {
+                            display: none;
+                        }
+
+                        .custom-slick-arrow:hover {
+                            opacity: 0.5;
+                        }
+
+                        .slick-dots-bottom li button{
+                            height:6px;
+                            border-radius: 3px;
+                            background-color:#655eff;
+                        }
+                    }
+                }
+            }
+
+            .bottom {
+                margin: 0 10px;
+                display: flex;
+                height: 30px;
+                width: 100%;
+                flex: 0 0 100%;
+                justify-content: center;
+                position:absolute;
+                left:0;
+                bottom:10px;
+                .add,
+                .remove {
+                    margin: 0 10px;
+                    width: 60px;
+                }
+
+                .remove {
+                    background-color: rgb(229, 79, 80);
+                    color: white;
+                }
+            }
+
+            .operate {
+                position: absolute;
+                bottom: 40px;
+                left: 0;
+                right: 0;
+                display: flex;
+                justify-content: space-evenly;
+
+                .btn {
+                    width: 100px;
+                    height: 30px;
+
+                    text &.submit {
+                        background-color: rgb(102, 94, 255);
+                    }
+
+                    &.reset {
+                        background-color: transparent;
+                        color: #78849e;
+                        border: 1px solid #78849e;
+                    }
+                }
+            }
+        }
+    }
+}

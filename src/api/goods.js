@@ -18,20 +18,44 @@ export function getGoodsList(page=1,limit=5) {
 
 /**
  * 通过id查询商品的详细信息
- * @param { Object } 具有id，appkey属性的对象 
+ * @param { Number } 商品Id
  * @returns promise对象
  */
-export function getGoodsDetail({
-    id,
-    appkey
-}) {
+export function getGoodsById(goodsId) {
     return axios({
         methods: "get",
-        url: "/products/" + id,
-        params: {
-            appkey
-        },
+        url: "/api/goods/" + goodsId,
     });
+}
+
+/**
+ * 通过关键字获取商品信息列表
+ * @param {*} keyword 关键字
+ * @param {*} limit 每页商品的数量
+ * @param {*} page 当前页数
+ */
+// export function getGoodsByKw(keyword,limit = 5,page = 1){
+//     return axios({
+//         method : "get",
+//         url : "/api/goods/findBykw",
+//         params : {
+//             keyword,
+//             limit,
+//             page
+//         }
+//     })
+// }
+
+export function getFilterGoods(condition,limit = 5,page = 1){
+    return axios({
+        method : "get",
+        url : "/api/goods/filter",
+        params : {
+            condition,
+            limit,
+            page
+        }
+    })
 }
 
 /**
@@ -56,10 +80,20 @@ export function getImgSrc(goodsId){
 export function getTags(goodsId){
     return axios({
         method : "get",
-        url : "/api/tag",
+        url : "/api/getTags",
         params : {
             goodsId
         }
+    })
+}
+
+/**
+ * 获取所有的商品标签
+ */
+export function getAllTags(){
+    return axios({
+        method : "get",
+        url : "/api/getAllTags"
     })
 }
 
@@ -70,7 +104,27 @@ export function getTags(goodsId){
 export function getAllCategory(){
     return axios({
         method : "get",
-        url : "/api/getAllCategory"
+        url : "/api/category"
+    })
+}
+
+export function getAllCategoryAndSub(){
+    return axios({
+        method : "get",
+        url : "/api/getAllCategoryAndSub"
+    })
+}
+/**
+ * 获取商品的所有子类
+ * @param {*} category 商品类别
+ */
+export function getSubCategory(category){
+    return axios({
+        method : "get",
+        url: "/api/getSubCategory",
+        params : {
+            category
+        }
     })
 }
 
@@ -96,10 +150,8 @@ export function removeGoods(id) {
 export function addGoods(data) {
     return axios({
         method: "post",
-        url: "/products/add",
-        data: {
-            ...data
-        },
+        url: "/api/goods",
+        data,
     })
 }
 
@@ -108,28 +160,43 @@ export function addGoods(data) {
  * @param {*} data 包括商品信息的表单数据以及appkey
  * @returns 
  */
-export function editGoods(data) {
+export function updateGoods(data) {
     return axios({
         method: "put",
-        url: "/products/edit",
-        data: {
-            ...data
-        },
+        url: "/api/goods",
+        data
     })
 }
 /**
  * 得到所有类目信息
  * @param { String } appkey
  */
-export function getCategoryInfo(appkey) {
+// export function getCategoryInfo(appkey) {
+//     return axios({
+//         method: "get",
+//         url: "/category/all",
+//         params: {
+//             appkey
+//         },
+//     });
+// }
+
+/**
+ * 修改商品类名
+ * @param {*} categoryId 类Id
+ * @param {*} category 类名
+ */
+export function updateCategory(oldCategory,newCategory){
     return axios({
-        method: "get",
-        url: "/category/all",
-        params: {
-            appkey
-        },
-    });
+        method : "put",
+        url : "/api/category",
+        data : {
+            oldCategory,
+            newCategory
+        }
+    })
 }
+
 /**
  * 添加商品类别
  * @param {*} option 
@@ -173,6 +240,32 @@ export function removeCategory(option) {
             appkey,
             id
         }
+    })
+}
+
+/**
+ * 上传图片
+ * @param {*} formData FormData实例对象
+ * @returns 
+ */
+export function uploadImg(formData){
+    return axios({
+        method : "post",
+        url : "/api/img",
+        data : formData
+    })
+}
+
+/**
+ * 删除图片
+ * @param {*} imgId 图片Id
+ * @returns 
+ */
+export function removeImg(imgId){
+    return axios({
+        method : "delete",
+        url : "/api/img",
+        data : imgId
     })
 }
 

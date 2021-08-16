@@ -25,6 +25,8 @@ import qwLabel from "./qwLabel";
 import qwButton from "./qwButton";
 
 import qwTagsList from "./qwTagsList"
+
+import qwTagsSelector from "./qwTagsSelector";
 export default {
   qwForm,
 
@@ -44,5 +46,7 @@ export default {
 
   qwButton,
 
-  qwTagsList
+  qwTagsList,
+
+  qwTagsSelector
 }

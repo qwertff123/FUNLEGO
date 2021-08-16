@@ -5,14 +5,14 @@ import axios from "../axios";
  * 参数为邮箱
  * @returns promise对象
  */
-export function getCode(data) {
-    return axios({
-        method: "post",
-        url: "/passport/getCode",
-        data: {
-            ...data
-        },
-    })
+export function getCode(email) {
+  return axios({
+    method: "get",
+    url: "/api/getCode",
+    data: {
+      email
+    }
+  })
 }
 
 /**
@@ -21,29 +21,29 @@ export function getCode(data) {
  * @param {*} password 密码
  * @returns 
  */
-export function login(email,password){
-    return axios({
-        method: "post",
-        url: "/api/login",
-        data: {
-          email,
-          password
-        },
-      });
+export function login(email, password) {
+  return axios({
+    method: "post",
+    url: "/api/login",
+    data: {
+      email,
+      password
+    },
+  });
 }
 
 /**
  * 用于用户注册
  * 参数为对象，对象内须有用户名，邮箱，密码，验证码
  */
-export function register(data){
-    return axios({
-        method: "post",
-        url: "/passport/logon",
-        data: {
-          ...data
-        },
-      })
+export function register(data) {
+  return axios({
+    method: "post",
+    url: "/api/register",
+    data: {
+      ...data
+    },
+  })
 }
 
 /**
@@ -51,10 +51,10 @@ export function register(data){
  * @param {*} data 
  * @returns 
  */
-export function whoami(){
+export function whoami() {
   return axios({
-    method : "get",
-    url : "/api/whoami",
+    method: "get",
+    url: "/api/whoami",
   })
 }
 
@@ -64,12 +64,12 @@ export function whoami(){
  * 参数为邮箱，密码，验证码
  * @returns 
  */
-export function findPassword(data){
-    return axios({
-        method : "post",
-        url : "/passport/findBack",
-        data : {
-          ...data
-        }
-      })
+export function findPassword(data) {
+  return axios({
+    method: "post",
+    url: "/passport/findBack",
+    data: {
+      ...data
+    }
+  })
 }

@@ -1,12 +1,12 @@
 <template>
-  <div class="carousel-area" :class="qwClass">
+  <div class="carousel-area">
     <div class="container">
       <slot></slot>
-      <div class="no-content" v-if="!hasContent">{{ placeholder }}</div>
+      <div class="no-content" v-if="count == 0">{{ placeholder }}</div>
     </div>
-    <ul class="spot-list" v-if="hasContent">
+    <ul class="spot-list" v-if="count != 0">
       <li
-        v-for="item in itemsLength"
+        v-for="item in count"
         :key="item"
         :class="{ selected: curIndex == item - 1 }"
         @click="curIndex = item - 1"
@@ -18,72 +18,51 @@
 export default {
   //用户进行双向数据绑定的值即为轮播图当前需要滚动到的页面下标
   model: {
-    prop: "value",
+    prop: "index",
     event: "change",
   },
   props: {
-    qwClass: {},
     itemWidth: {
       required: true,
     },
-    watch: {},
-    value: {},
-    placeholder: {},
+    count: {//轮播内容的数量
+      default: 0,
+    },
+    index: 0,
+    placeholder: {
+      default(){
+        return "请添加图片"
+      }
+    },
   },
   data() {
     return {
-      itemsLength: null, //轮播内容的数量
-      hasContent: false, //当前是否有轮播内容
+      curIndex: 0, //当前展示的索引值
     };
   },
-  computed: {
-    //当前轮播内容的下标
-    curIndex: {
-      get() {
-        return this.value;
-      },
-      set(curIndex) {
-        this.$emit("change", curIndex);
-      },
-    },
-  },
   watch: {
-    //侦查用户所传入的响应式数据
-    watch() {
-      this.initContainerWidth();
-
-      //每次添加或移除轮播页时都展示最后一张轮播页
-      this.curIndex = this.itemsLength - 1;
-    },
-
-    value() {
+    curIndex() {
       this.container.style.transform = `translateX(${
         -this.curIndex * this.itemWidth
       }px)`;
+      this.$emit("change",this.curIndex);
+      this.$emit("imgChange",this.curIndex);
+    },
+    count() {
+      this.curIndex = this.count - 1;
+      console.log(this.count);
     },
   },
   methods: {
     //用于通过用户传入当个轮播内容的宽度来计算轮播容器的宽度
     initContainerWidth() {
-      //如果插槽内有内容
-      if (this.$slots.default) {
-        this.hasContent = true;
-        //通过计算默认插槽的数量即可以知道轮播内容的数量
-        this.itemsLength = this.$slots.default.length;
-        this.container.style.width = this.itemsLength * this.itemWidth + "px";
-        if (!this.itemsLength) {
+        this.container.style.width = this.count * this.itemWidth + "px";
+        if (!this.count) {
           this.container.style.width = this.itemWidth + "px";
         }
-      } else {
-        //如果插槽内没有内容即表示当前没有轮播内容
-        this.hasContent = false;
-      }
     },
   },
   mounted() {
-    //每次新的展示时都讲当前的下标更新至0
-    this.curIndex = 0;
-
     //记录container元素便于使用
     this.container = this.$el.querySelector(".container");
 
@@ -91,11 +70,11 @@ export default {
     this.initContainerWidth();
 
     //监听按钮
-    this.$eventBus.$on("prev", () => {
-      this.curIndex = (this.curIndex - 1 + this.itemsLength) % this.itemsLength;
+    this.$eventBus.$on("prev", ()=>{
+      this.curIndex = (this.curIndex - 1 + this.count) % this.count;
     });
-    this.$eventBus.$on("next", () => {
-      this.curIndex = (this.curIndex + 1 + this.itemsLength) % this.itemsLength;
+    this.$eventBus.$on("next",()=>{
+      this.curIndex = (this.curIndex + 1 + this.count) % this.count;
     });
   },
 };
@@ -104,12 +83,18 @@ export default {
 .carousel-area {
   overflow: hidden;
   position: relative;
+  width:150px;
+  height:150px;
   .container {
     transform: translateX(0);
     // transition: all 0.3s;
     display: flex;
     height: 100%;
 
+    .carousel-item{
+      flex-shrink: 0;
+      flex-grow: 0;
+    }
     .no-content {
       width: 100%;
       height: 100%;

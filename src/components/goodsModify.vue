@@ -1,21 +1,21 @@
 <template>
-  <div class="edit">
-    <div class="back" @click="onback">返回</div>
+  <div class="edit" v-if="goods">
+    <div class="back" @click="back">返回</div>
     <div class="card">
-      <div class="id" v-if="goods">ID : {{ goods.id }}</div>
-      <qw-form class="form" @submit="submit">
+      <div class="id">ID : {{ goods.id }}</div>
+      <qw-form class="form" @submit="submit" :rules="rules">
         <div class="form-left">
           <qw-label label="商品标题" class="item">
-            <qw-input v-model="form.title"></qw-input>
+            <qw-input v-model="goods.title" prop="title"></qw-input>
           </qw-label>
 
           <qw-label label="商品描述" class="item">
-            <qw-input v-model="form.desc"></qw-input>
+            <qw-input v-model="goods.desc" prop="desc"></qw-input>
           </qw-label>
 
           <div class="item">
             <qw-label label="商品类目" class="left">
-              <qw-select v-model="form.category">
+              <qw-select v-model="goods.category">
                 <qw-option
                   v-for="category in categoryList"
                   :key="category"
@@ -26,89 +26,103 @@
             </qw-label>
 
             <qw-label label="商品子类目" class="right">
-              <!-- <qw-select
-                v-model="form.c_item"
-                placeholder="请选择"
-                :watch="c_items_list"
-              >
+              <qw-select v-model="goods.subCategory">
                 <qw-option
-                  v-for="item in c_items_list"
-                  :key="item"
-                  :value="item"
-                  >{{ item }}</qw-option
+                  v-for="item in subCategoryList"
+                  :key="item.id"
+                  :value="item.name"
+                  >{{ item.name }}</qw-option
                 >
-              </qw-select> -->
+              </qw-select>
             </qw-label>
           </div>
           <div class="item">
             <qw-label label="商品价格" class="left">
-              <qw-input class="center" v-model="form.price"></qw-input>
+              <qw-input
+                class="center"
+                v-model="goods.price"
+                prop="price"
+              ></qw-input>
             </qw-label>
             <qw-label label="商品折扣价" class="right">
               <qw-input
                 class="center"
-                v-model="form.price_off"
-                placeholder="请输入"
+                v-model="goods.price_off"
+                placeholder="空"
+                prop="price_off"
               ></qw-input>
             </qw-label>
           </div>
           <qw-label label="商品标签" class="tags-area">
-            <qw-tags-list
-              v-model="form.tags"
-              placeholder="请输入标签名"
-            ></qw-tags-list>
+            <qw-tags-selector
+              v-model="goods.tags"
+              :tagsList="tagsList"
+            ></qw-tags-selector>
           </qw-label>
         </div>
         <div class="form-right">
           <div class="item">
             <qw-label label="商品单位" class="left">
-              <qw-input class="center" v-model="form.unit"></qw-input>
+              <qw-input
+                class="center"
+                v-model="goods.unit"
+                prop="unit"
+              ></qw-input>
             </qw-label>
             <qw-label label="是否上架" class="right switch">
               <div class="switch">
-                <qw-switch v-model="form.status"></qw-switch>
+                <qw-switch v-model="goods.issale"></qw-switch>
               </div>
             </qw-label>
           </div>
 
           <div class="item">
             <qw-label label="库存量" class="left">
-              <qw-input class="center" v-model="form.inventory"></qw-input>
+              <qw-input
+                class="center"
+                v-model="goods.inventory"
+                prop="inventory"
+              ></qw-input>
             </qw-label>
             <qw-label label="销售量" class="right">
-              <qw-input class="center" v-model="form.sales"></qw-input>
+              <qw-input
+                class="center"
+                v-model="goods.sales"
+                prop="sales"
+              ></qw-input>
             </qw-label>
           </div>
-          <qw-label label="商品图片" class="">
+          <qw-label label="商品图片">
             <div class="image-area">
-              <qw-carousel class="carousel">
-                <carousel-control move="prev" class="control"
-                  >《</carousel-control
-                >
-                <carousel-area
-                  item-width="200"
-                  :watch="form.images"
-                  v-model="curImgIndex"
-                >
-                  <carousel-item
-                    v-for="img in form.images"
-                    :key="img"
-                    class="carousel-item"
+              <a-carousel arrows :afterChange="updateIndex" class="carousel">
+                <template #prevArrow @click="sliding = true">
+                  <div
+                    class="custom-slick-arrow"
+                    :style="{ left: '10px', zIndex: 1 }"
                   >
-                    <img :src="img" alt="" />
-                  </carousel-item>
-                </carousel-area>
-                <carousel-control move="next" class="control">
-                  》</carousel-control
+                    <a-icon type="left-circle" />
+                  </div>
+                </template>
+                <template #nextArrow @click="sliding = true">
+                  <div class="custom-slick-arrow" style="right: 10px">
+                    <a-icon type="right-circle" />
+                  </div>
+                </template>
+                <div
+                  class="carousel-item"
+                  v-for="img in goods.images"
+                  :key="img.id"
                 >
-              </qw-carousel>
-
+                  <img :src="img.src" alt="" />
+                </div>
+              </a-carousel>
               <div class="bottom">
                 <qw-button
                   label="添加"
                   class="add"
                   type="file"
                   @change="uploadImage"
+                  @keypress.native.enter="() => {}"
                 ></qw-button>
                 <qw-button
                   label="删除"
@@ -139,237 +153,119 @@ import formComponent from "@/components/formComponent";
 //导入轮播图组件
 import carouselCompinent from "@/components/carouselComponent";
 
-import { getAllCategory } from "@/api/goods";
-import {getBase64 } from "@/util"
+import "@/assets/css/goodsModify.less";
+
+import * as goodsApi from "@/api/goods";
+import { getAllCategoryAndSub, getAllTags, uploadImg } from "@/api/goods";
+import { getBase64 } from "@/util";
 export default {
   components: {
     ...formComponent,
     ...carouselCompinent,
   },
   props: {
-    goods: {
-      type: Object,
-    },
-    onback: {
-      type: Function,
-      default: () => {
-        return () => {};
-      },
+    goodsId: {
+      type: Number,
+      require: true,
     },
   },
   data() {
     return {
-      form: {
-        title: "",
-        desc: "",
-        category: "",
-        // c_items: "",
-        tags: [],
-        price: "",
-        price_off: "",
-        unit: "",
-        issale: "",
-        images: [],
-        inventory: "",
-        sales: "",
+      goods: null,
+      formCache: null, //用于缓存原始数据，便于重置
+      rules: {
+        title: [{ require: true, msg: "必须填上标题" }],
       },
       curImgIndex: 0,
-      categoryList: ["1", "2"],
+      categoryList: [],
+      tagsList: [],
+      subCategoryList: [],
+      categoryMap: null, //类名与其id的映射表
+      sliding: false, //轮播图是否处于轮播状态
+      // subCategoryMap: null, //子类目与其id的映射表
+      // originImgs: [], //用于记录原始图片
+      // newImgs: [], //用于记录新添加的图片
+      // rmImgs: [], //用于记录删除的图片
     };
   },
-  mounted() {
-    Object.assign(this.form, this.goods);
-    console.log(this.form);
-    getAllCategory().then((result) => {
-      this.categoryList = result.data;
-      console.log(this.categoryList);
-    });
+  async created() {
+    await this.initGoods();
+    this.categoryMap = {};
+    const result = (await getAllCategoryAndSub()).data;
+    for (const category of result) {
+      this.categoryList.push(category.name);
+      this.categoryMap[category.name] = category.subCategories;
+    }
+    this.subCategoryList = this.categoryMap[this.goods.category];
+
+    this.subCategoryList = this.categoryMap[this.goods.category];
+
+    const tagsList = await getAllTags();
+    this.tagsList = tagsList.data;
+  },
+  watch: {
+    "goods.category": {
+      immediate: false,
+      handler: async function () {
+        if (!this.categoryMap) return;
+        this.subCategoryList = this.categoryMap[this.goods.category];
+        this.goods.subCategory = this.subCategoryList[0].name;
+      },
+    },
   },
   methods: {
-    uploadImage(el) {
-      getBase64(el).then((base64) => {
-        this.form.images.push(base64);
-      });
+    async initGoods() {
+      const goodsId = this.goodsId;
+      console.log("id", goodsId);
+      const goodsInfo = (await goodsApi.getGoodsById(goodsId)).data;
+      goodsInfo.images = (await goodsApi.getImgSrc(goodsId)).data;
+      goodsInfo.tags = (await goodsApi.getTags(goodsId)).data;
+
+      this.goods = goodsInfo;
+      console.log(this.goods);
+    },
+    async uploadImage(el) {
+      // getBase64(el).then((base64) => {
+      //   //生成base64图片在页面中展示
+      //   this.goods.images.push({ src: base64 });
+      // });
+      /* 上传图片到服务中 */
+      const formData = new FormData();
+      formData.append("img", el.files[0]);
+      formData.append("goodsId", this.goods.id);
+      const src = (await uploadImg(formData)).data;
+      this.goods.images.push(src);
     },
     removeImage() {
-        this.form.images.splice(this.curImgIndex,1);
+      if (this.sliding) {
+        //轮播图处于滑动状态，不移除图片
+        return;
+      }
+      const index = this.goods.images.splice(this.curImgIndex, 1)[0];
+      goodsApi.removeImg(index);
     },
-    resetForm() {},
+    updateIndex(index) {
+      this.curImgIndex = index;
+      this.sliding = false;
+    },
+    resetForm() {
+      //图片不做重置处理
+      this.formCache.images = this.goods.images;
+
+      this.goods = deepClone(this.formCache);
+    },
     submit() {
-      this.$emit("submit", this.form);
+      //向数据中注入子类目更改后的id
+      this.goods.subCategoryId = this.subCategoryList.find((val) => {
+        return val.name == this.goods.subCategory;
+      }).id;
+      console.log(this.goods);
+      // this.diffImgs();
+      this.$emit("submit", this.goods);
+    },
+    back() {
+      this.$emit("back");
     },
   },
 };
 </script>
-<style scoped lang="less">
-.edit {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-
-  .back {
-    width: 50px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    background-color: rgb(88, 115, 255);
-    color: white;
-    cursor: pointer;
-
-    &:active {
-      opacity: 0.6;
-    }
-  }
-  .center {
-    text-align: center;
-    padding-left: 0;
-  }
-  .card {
-    flex: 1 1 auto;
-    width: 100%;
-    border: 1px solid rgba(101, 94, 255, 0.6);
-    box-shadow: 0 0 8px 1px rgba(101, 94, 255, 0.6);
-    border-radius: 15px;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-
-    .id {
-      display: inline-block;
-      height: 30px;
-      line-height: 30px;
-      margin-bottom: 10px;
-      font-size: 20px;
-      background-color: rgb(206, 210, 221);
-      border-radius: 5px;
-      padding: 0 20px;
-      font-weight: bolder;
-      color: white;
-    }
-
-    .form {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-
-      .form-left {
-        flex: 0 0 48%;
-      }
-
-      .form-right {
-        flex: 0 0 48%;
-      }
-
-      .item {
-        display: flex;
-        margin: 15px 0;
-        height: 35px;
-        justify-content: space-between;
-
-        .qw-input {
-          flex: 1 1 auto;
-          text-align: center;
-        }
-        .left,
-        .right {
-          flex: 0 0 45%;
-        }
-
-        .switch {
-          margin-left: 20px;
-          display: flex;
-          align-items: center;
-        }
-      }
-
-      .tags-area {
-        margin: 15px 0;
-        height: auto;
-      }
-
-      .image-area {
-        display: flex;
-        height: 250px;
-        flex-wrap: wrap;
-        border: 1px solid black;
-
-        .carousel {
-          height: 180px;
-          width: 100%;
-          border: 1px solid black;
-          display: flex;
-
-          .carousel-area {
-            height: 100%;
-            width: 200px;
-
-            .carousel-item {
-              width: 300px;
-              height: 100%;
-            }
-
-            img {
-              width: 100%;
-              height: 100%;
-            }
-          }
-
-          .control {
-            flex: 1 1 auto;
-          }
-        }
-
-        .bottom {
-          margin: 0 10px;
-          display: flex;
-          height: 30px;
-          width: 100%;
-          justify-content: center;
-          .add,
-          .remove {
-            margin: 0 10px;
-            width: 60px;
-          }
-
-          .remove {
-            background-color: rgb(229, 79, 80);
-            color: white;
-          }
-        }
-      }
-
-      .operate {
-        position: absolute;
-        bottom: 40px;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: space-evenly;
-
-        .btn {
-          width: 100px;
-          height: 30px;
-
-          text &.submit {
-            background-color: rgb(102, 94, 255);
-          }
-
-          &.reset {
-            background-color: transparent;
-            color: #78849e;
-            border: 1px solid #78849e;
-          }
-        }
-      }
-    }
-  }
-}
-</style>

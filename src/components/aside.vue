@@ -2,7 +2,7 @@
   <div id="aside">
     <h1>qwertff</h1>
     <div class="aside-list">
-      <qw-menu default-active="3-2" :active="$route.meta.index">
+      <qw-menu default-active="2" :active="$route.meta.index">
         <template v-for="(item, index) in $store.state.menuRoutes">
           <router-link
             :to="{ name: item.name }"
@@ -11,7 +11,14 @@
             :key="item.name"
             v-if="!item.children"
           >
-            <qw-menu-item :index="index + 1" @click.native="navigate">
+            <qw-menu-item
+              :index="index + 1"
+              @click.native="navigate"
+              v-if="
+                (item.meta.admin && $store.state.userInfo.admin) ||
+                !item.meta.admin
+              "
+            >
               <i class="iconfont" :class="item.meta.icon"></i
               >{{ item.meta.title }}
             </qw-menu-item>
@@ -97,7 +104,7 @@ export default {
     up(el) {
       slide.up(el);
     },
-  }
+  },
 };
 </script>
 <style scoped lang="less">
@@ -109,8 +116,8 @@ export default {
 }
 
 i {
-  font-size:16px;
-  margin-right:10px;
+  font-size: 16px;
+  margin-right: 10px;
   &.goodsManage::after {
     content: "\e619";
   }
@@ -123,8 +130,8 @@ i {
   &.orderManage::after {
     content: "\e634";
   }
-  
-  &.categoryManage::after{
+
+  &.categoryManage::after {
     content: "\e617";
   }
 }

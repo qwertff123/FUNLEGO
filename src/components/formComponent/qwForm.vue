@@ -44,6 +44,7 @@ export default {
           }
         });
       }
+      console.log(vertifyError);
       this.$formBus.$emit("submitVertify",vertifyError);
       if (vertifyError.length == 0) {
         this.$emit("submit", e.target);

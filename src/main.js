@@ -8,14 +8,28 @@ import "./assets/css/iconfont.css"
 
 //导入vuex
 import store from "./store";
+
+import {
+  Steps,
+  Button,
+  message,
+  Icon,
+  Carousel
+} from 'ant-design-vue';
 Vue.config.productionTip = false;
 
-store.dispatch("whoami");
+Vue.use(Steps);
+Vue.use(Button);
+Vue.use(Carousel);
+Vue.use(Icon);
+Vue.prototype.$message = message;
 
-new Vue({
-  router,
+const app = new Vue({
   store,
+  router,
   render: h => h(App),
-}).$mount('#app');
+}).$mount("#app");
 
-
+store.dispatch("whoami").catch(err => {
+  app.$router.push("/login");
+});

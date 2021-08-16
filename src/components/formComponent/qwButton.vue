@@ -6,7 +6,7 @@
       v-if="type == 'file'"
       @change="handleClick"
     />
-    <button @click="handleClick">
+    <button :type="type=='submit' ? 'submit' : 'button'" @click="handleClick">
       {{ label }}
     </button>
   </div>

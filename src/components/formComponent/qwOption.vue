@@ -1,8 +1,8 @@
 <template>
-  <div class="qw-option" @click="handleClick" :class="{ selected: selected }">
+  <div class="qw-option"  @click ="handleClick" :class="{ selected: selected }">
     <slot></slot>
   </div>
-</template>
+</template> 
 <script>
 export default {
   props: ["value"],

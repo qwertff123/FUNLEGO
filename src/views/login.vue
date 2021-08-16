@@ -10,13 +10,19 @@
           :key="1"
         >
           <p class="control-title">登录</p>
-          <qw-input v-model="form.email" prop="email" placeholder="请输入邮箱">
+          <qw-input
+            v-model="form.email"
+            prop="email"
+            placeholder="请输入邮箱"
+            :icon="true"
+          >
             <i class="iconfont email"></i>
           </qw-input>
           <qw-input
             v-model="form.password"
             prop="password"
             placeholder="请输入密码"
+            :icon="true"
           >
             <i class="iconfont password"></i>
           </qw-input>
@@ -46,6 +52,7 @@
             v-model="form.username"
             placeholder="请输入用户名"
             prop="username"
+            :icon="true"
           >
             <i class="iconfont username"></i>
           </qw-input>
@@ -55,6 +62,7 @@
             placeholder="请输入邮箱"
             prop="email"
             :key="10022"
+            :icon="true"
           >
             <i class="iconfont email"></i>
           </qw-input>
@@ -63,6 +71,7 @@
             v-model="form.password"
             placeholder="请输入密码"
             prop="password"
+            :icon="true"
           >
             <i class="iconfont password"></i>
           </qw-input>
@@ -72,11 +81,16 @@
             v-model="form.passwordConfirm"
             placeholder="请重新输入密码"
             prop="passwordConfirm"
+            :icon="true"
           >
             <i class="iconfont password"></i>
           </qw-input>
           <label class="vertify-code">
-            <qw-input v-model="form.code" placeholder="请输入验证码">
+            <qw-input
+              v-model="form.code"
+              placeholder="请输入验证码"
+              :icon="true"
+            >
               <i class="iconfont code"></i>
             </qw-input>
             <qw-button
@@ -108,18 +122,26 @@
         >
           <p class="control-title">找回密码</p>
 
-          <qw-input v-model="form.email" placeholder="请输入邮箱">
+          <qw-input v-model="form.email" placeholder="请输入邮箱" :icon="true">
             <i class="iconfont email"></i>
           </qw-input>
-          <qw-input v-model="form.password" placeholder="请输入密码">
+          <qw-input
+            v-model="form.password"
+            placeholder="请输入密码"
+            :icon="true"
+          >
             <i class="iconfont password"></i>
           </qw-input>
 
-          <qw-input v-model="form.passwordConfirm" placeholder="请重新输入密码">
+          <qw-input
+            v-model="form.passwordConfirm"
+            placeholder="请重新输入密码"
+            :icon="true"
+          >
             <i class="iconfont password"></i>
           </qw-input>
           <div class="vertify-code">
-            <qw-input v-model="form.code" placeholder="验证码">
+            <qw-input v-model="form.code" placeholder="验证码" :icon="true">
               <i class="iconfont code"></i>
             </qw-input>
             <qw-button
@@ -162,7 +184,7 @@ export default {
       status: "login",
       form: {
         username: "",
-        email: "1648494263@qq.com",
+        email: "",
         password: "1648494263",
         passwordConfirm: "",
         code: "",
@@ -203,31 +225,32 @@ export default {
   methods: {
     getCode() {
       api.getCode(this.form.email).then((data) => {
+        alert("验证码发送成功");
         console.log(data);
       });
     },
     async login() {
       const { email, password } = this.form;
-      const result = await this.$store.dispatch("login",{
+      const result = await this.$store.dispatch("login", {
         email,
-        password
+        password,
       });
-      if(result.status == "error"){
+      if (result.status == "error") {
         console.log(result.msg);
-      }else{
+      } else {
         const userInfo = result.data;
         console.log(result);
         //将token存放至localstore中
-        window.localStorage.setItem("token",userInfo.token);
+        window.localStorage.setItem("token", userInfo.token);
         this.$router.push("/");
       }
     },
     register() {
-      console.log("注册了");
       const { username, email, password, code } = this.form;
       api.register({ username, email, password, code }).then((result) => {
-        if (result.status == "fail") {
-          alert("信息填写不全");
+        console.log(result);
+        if (result.status == "error") {
+          alert(result.msg);
         } else {
           alert("注册成功");
           this.status = "login";

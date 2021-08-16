@@ -36,6 +36,9 @@ const store = new Vuex.Store({
         async whoami(context){
             context.commit("setIsLoading",true);
             const result = await userApi.whoami();
+            if(result.status == "error"){
+                throw Error("还没有登录")
+            }
             context.commit("setUserInfo",result.data);
             context.commit("setIsLoading",false); 
         }

@@ -3,7 +3,7 @@
     class="qw-select content"
     :class="{ error: errorMsg, correct: errorMsg != null && !errorMsg }"
   >
-    <div class="select" @click="changeStatus">
+    <div class="select" @click ="changeStatus">
       <input
         type="text"
         :value="displayValue"
@@ -37,7 +37,7 @@ export default {
     prop: "value",
     event: "change",
   },
-  props: ["label", "placeholder", "prop", "value", "watch"],
+  props: ["label", "placeholder", "prop", "value"],
   inject: ["totalRules"],
   data() {
     return {
@@ -51,13 +51,6 @@ export default {
     };
   },
   watch: {
-    watch() {
-      console.log("检测到某值得改变");
-      requestAnimationFrame(() => {
-        this.initoptionsInfo();
-        this.$emit("change", "");
-      });
-    },
     value() {
       //当值发生改变时触发change事件
       this.$refs.select.dispatchEvent(this.changeEvent);
@@ -90,6 +83,9 @@ export default {
         break;
       }
     }
+     this.$on("update", (optionInfo) => {
+      this.optionsInfo.push(optionInfo);
+    });
   },
 
   mounted() {
@@ -97,10 +93,6 @@ export default {
     this.$on("selected", (value) => {
       this.isDrap = false;
       this.$emit("change", value);
-    });
-
-    this.$on("update", (optionInfo) => {
-      this.optionsInfo.push(optionInfo);
     });
 
     //注册用于校验本表单的事件
@@ -156,6 +148,7 @@ export default {
 .qw-select {
   position: relative;
   border: 1px solid #eee;
+  height:100%;
   &.error {
     border: 1px solid #f56c6c;
   }

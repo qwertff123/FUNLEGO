@@ -1,7 +1,12 @@
 <template>
   <div id="change-page">
     <div class="page">
-      <span class="page-prev" :class="{ hide : pageSelected == 1}" @click="change(--pageSelected)">&lt; 上一页</span>
+      <span
+        class="page-prev"
+        :class="{ hide: pageSelected == 1 }"
+        @click="change(--pageSelected)"
+        >&lt; 上一页</span
+      >
       <ol class="page-number" v-if="pageSize < 9">
         <li
           v-for="num in pageSize"
@@ -43,24 +48,29 @@
           {{ pageSize }}
         </li>
       </ol>
-      <span class="page-next" :class="{ hide : pageSelected == pageSize}" @click="change(++pageSelected)">下一页 &gt;</span>
+      <span
+        class="page-next"
+        :class="{ hide: pageSelected == pageSize }"
+        @click="change(++pageSelected)"
+        >下一页 &gt;</span
+      >
     </div>
   </div>
 </template>
 <script>
 export default {
   props: {
-	//最大页码
+    //最大页码
     pageSize: {
       type: Number,
       required: true,
     },
-	//当前的页码
+    //当前的页码
     curPage: {
       type: Number,
       default: 1,
     },
-	//在换页时需要触发的回掉函数
+    //在换页时需要触发的回掉函数
     callback: {
       type: Function,
       default: () => {},
@@ -71,8 +81,16 @@ export default {
       pageSelected: null,
     };
   },
-  created() {
-    this.pageSelected = this.curPage;
+  // created() {
+  //   this.pageSelected = this.curPage;
+  // },
+  watch: {
+    curPage: {
+      immediate: true,
+      handler() {
+        this.pageSelected = this.curPage;
+      },
+    },
   },
   methods: {
     change(page) {

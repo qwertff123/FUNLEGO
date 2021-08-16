@@ -7,6 +7,9 @@
             <img class="user-icon" src="../assets/user.webp"/>
             <span class="nickname">{{ this.$store.state.userInfo.nickname }}</span>
             <i class="iconfont drap-arrow"></i>
+            <div class="drag-list">
+                <span @click="logout">登出</span>
+            </div>
         </div>
     </div>
 </template>
@@ -15,6 +18,12 @@ export default {
     // mounted(){
     //     console.log(this.$store.state)
     // }
+    methods : {
+        logout(){
+            window.localStorage.removeItem("token");
+            window.location.reload();
+        }
+    }
 }
 </script>
 <style scoped lang="less">
@@ -27,6 +36,7 @@ export default {
     .user-info{
         display: flex;
         align-items: center;
+        position: relative;
         img{
             width:30px;
             height:30px;
@@ -39,6 +49,23 @@ export default {
             font-size:12px;
             color:rgb(206,210,221);
             cursor: pointer;
+        }
+        .drag-list{
+            width:80px;
+            position: absolute;
+            right:10px;
+            bottom:-30px;
+            background-color:#eee;
+            
+            span{
+                display: inline-block;
+                height:30px;
+                line-height: 30px;
+                width: 100%;
+                text-align: center;
+                box-sizing: border-box;
+                cursor: pointer;    
+            }
         }
     }
 

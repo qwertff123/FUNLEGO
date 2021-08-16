@@ -29,16 +29,17 @@ const routes = [{
         path: "/1",
         redirect: "categoryManage",
         meta: {
-            menu: 1
+            menu: 1,
         },
         component: () => import("./views/home"),
         children: [{
             path: "/categoryManage",
-            name : "categoryManage",
+            name: "categoryManage",
             meta: {
-                title: "类别管理",
+                title: "类名与标签",
                 icon: "categoryManage",
-                index : 2
+                index: 2,
+                admin: true //需要管理员才能访问
             },
             component: () => import("./views/categoryManage")
         }]
@@ -50,7 +51,7 @@ const routes = [{
         meta: {
             title: "销售管理",
             icon: "saleManage",
-            index : 3,
+            index: 3,
             //标记为2级菜单
             menu: 2
         },
@@ -62,7 +63,7 @@ const routes = [{
                 meta: {
                     title: "销售统计",
                     icon: "saleStatistics",
-                    index : "3-1"
+                    index: "3-1"
                 },
                 component: () => import("./views/statistics")
             },
@@ -72,7 +73,7 @@ const routes = [{
                 meta: {
                     title: "订单管理",
                     icon: "orderManage",
-                    index : "3-2"
+                    index: "3-2"
                 },
                 component: () => import("./views/order")
             }
@@ -86,14 +87,13 @@ const routes = [{
 
 const router = new VueRouter({
     routes,
-    mode : "history"
+    mode: "history"
 });
 
 router.beforeEach((to, from, next) => {
-    //这只是测试阶段的登录校验，没有安全性
-    if (to.path == "/login" || window.document.cookie.includes("appkey")) {
+    if (to.path == "/login" || window.localStorage.getItem("token")) {
         //获取作用于菜单栏的路由
-        const menuRoutes = routes.filter(val => {
+        let menuRoutes = routes.filter(val => {
             return val.meta && val.meta.menu;
         }).map(val => {
             if (val.meta.menu == 1) {
@@ -102,13 +102,9 @@ router.beforeEach((to, from, next) => {
                 return val;
             }
         }).flat();
-        
         store.dispatch("changeMenuRoutes", menuRoutes).then(() => {
             next();
         })
-    } else {
-        alert("你还没有登录呢!");
-        next("/login");
     }
 })
 

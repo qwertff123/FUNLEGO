@@ -26,6 +26,7 @@ export function deepClone(origin) {
  */
 export function getBase64(el) {
     return new Promise((resolve) => {
+        console.log("元素",el);
         const files = el.files[0];
 
         //利用该对象可以用于读取文件的ArrayBuffer以及文本字符串

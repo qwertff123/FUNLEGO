@@ -6,3 +6,8 @@ export default {
     
 }
 </script>
+<style>
+html{
+    font-size:14px;
+}
+</style>

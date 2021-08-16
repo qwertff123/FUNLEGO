@@ -1,5 +1,7 @@
 import axios from "axios";
-axios.defaults.baseURL = "http://127.0.0.1:8886"
+axios.defaults.baseURL = "http://127.0.0.1:8886";
+//允许服务端设置cookie
+axios.defaults.withCredentials = true;
 axios.interceptors.response.use(({ data }) => {
     return data;
 })
