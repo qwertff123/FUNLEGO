@@ -10,6 +10,6 @@ require("./association");
 
 //同步所有模型
 
-sequelize.sync({
-   alter : true
-})
+// sequelize.sync({
+//    alter : true
+// })

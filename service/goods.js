@@ -4,6 +4,9 @@ const SubCategory = require("../model/sub_category");
 const Tag = require("../model/tag");
 const sequelize = require("../model/sequelize");
 const Sequelize = require("sequelize");
+const {
+    Op
+} = require("sequelize");
 
 /**
  * 每一件商品都对应着一个用户的username
@@ -17,11 +20,10 @@ exports.getGoods = async function (username, page, limit) {
     return await Goods.findAndCountAll({
         include: [{ //引入要关联的表
             model: SubCategory,
-            attributes: []   //不自动的向结果添加属性，应为这样无法给属性名取别名，结果类似于"category.name" : 123 
-            , 
-            include : {
-                model : Category,
-                attributes:[]
+            attributes: [], //不自动的向结果添加属性，应为这样无法给属性名取别名，结果类似于"category.name" : 123 
+            include: {
+                model: Category,
+                attributes: []
             }
         }],
         attributes: {
@@ -29,7 +31,8 @@ exports.getGoods = async function (username, page, limit) {
             //使用Sequelize.col手动引入联表引入的属性并为其取别名
             include: [
                 [Sequelize.col("sub_category.name"), "subCategory"],
-                [Sequelize.col("sub_category.category.name"), "category"]
+                [Sequelize.col("sub_category.category.name"), "category"],
+                [Sequelize.col("sub_category.category.Id"), "categoryId"]
             ]
             // include : ["category.name"]
         },
@@ -43,14 +46,45 @@ exports.getGoods = async function (username, page, limit) {
 }
 
 /**
+ * 根据商品Id获取商品信息
+ * @param {*} goodsId 商品Id
+ * @returns 
+ */
+exports.getGoodsById = async function (goodsId) {
+    return await Goods.findByPk(goodsId, {
+        include: [{ //引入要关联的表
+            model: SubCategory,
+            attributes: [], //不自动的向结果添加属性，应为这样无法给属性名取别名，结果类似于"category.name" : 123 
+            include: {
+                model: Category,
+                attributes: []
+            }
+        }],
+        attributes: {
+            exclude: ["createdAt", "updatedAt", "username", "subCategoryId"],
+            //使用Sequelize.col手动引入联表引入的属性并为其取别名
+            include: [
+                [Sequelize.col("sub_category.name"), "subCategory"],
+                [Sequelize.col("sub_category.category.name"), "category"],
+                [Sequelize.col("sub_category.category.Id"), "categoryId"]
+            ]
+            // include : ["category.name"]
+        },
+    });
+}
+/**
  * 增加商品
  * @param {*} username 用户名
  * @param {*} info 
  */
 exports.addGoods = async function (username, info) {
     info.username = username;
-    await Goods.create(info);
-    return true
+    console.log(info);
+    if (info.price_off == "") {
+        info.price_off = null;
+    }
+    const result = await Goods.create(info);
+    return result
 }
 
 /**
@@ -61,6 +95,7 @@ exports.addGoods = async function (username, info) {
  * @returns 
  */
 exports.updateGoods = async function (username, id, info) {
+    console.log(info);
     await Goods.update(info, {
         where: {
             username,
@@ -84,4 +119,104 @@ exports.deleteGoods = async function (username, id) {
         }
     })
     return true
+}
+
+/**
+ * 根据关键字查询商品列表
+ * @param { Object } condition 
+ */
+// exports.findGoodsByKw = async function (keyword, limit, page) {
+//     return await Goods.findAndCountAll({
+//         where: {
+//             title: {
+//                 [Op.like]: "%" + keyword + "%"
+//             }
+//         },
+//         limit,
+//         offset: page
+//     })
+// }
+
+// exports.findByCategory = async function (category, limit, page) {
+//     return await Goods.findAndCountAll({
+//         include: {
+//             model: SubCategory,
+//             attributes: [],
+//             include: {
+//                 model: Category,
+//                 attributes: []
+//             }
+//         },
+//         where: {
+//             "$sub_category.category.name$": category
+//         },
+//         limit,
+//         offet: page
+//     })
+// };
+
+exports.filter = async function (username,condition, limit, page) {
+    return await Goods.findAndCountAll({
+        include: {
+            model: SubCategory,
+            attributes: [],
+            include: {
+                model: Category,
+                attributes: []
+            }
+        },
+        where: {
+            username,
+            ...getVaildCondition(condition)
+        },
+        attributes: {
+            exclude: ["createdAt", "updatedAt", "username", "subCategoryId"],
+            //使用Sequelize.col手动引入联表引入的属性并为其取别名
+            include: [
+                [Sequelize.col("sub_category.name"), "subCategory"],
+                [Sequelize.col("sub_category.category.name"), "category"]
+            ]
+            // include : ["category.name"]
+        },
+        limit: +limit,
+        offset: (+page - 1) * +limit,
+        order: ["id"]
+    })
+}
+
+/**
+ * 用于获取符合where配置格式的数据
+ * @param { Object } condition 需要筛选的条件数据 例如 { keyword : "与", }
+ * @returns 
+ */
+function getVaildCondition(condition) {
+    const {
+        keyword = "", category = "",
+            subCategory = ""
+    } = condition;
+    const filterCondition = {
+        keyword: {
+            field: "title",
+            condition: {
+                [Op.like]: "%" + keyword + "%"
+            }
+        },
+        category: {
+            field: "$sub_category.category.name$",
+            condition: category
+        },
+        subCategory: {
+            field: "$sub_category.name$",
+            condition: subCategory
+        }
+    }
+    const where = {};
+    for (const key in condition) {
+        //如果为空则默认为所有
+        if (condition[key] == "") {
+            continue;
+        }
+        where[filterCondition[key].field] = filterCondition[key].condition;
+    }
+    return where;
 }

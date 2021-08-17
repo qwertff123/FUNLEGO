@@ -12,3 +12,41 @@ const Img = require("../model/img");
         attributes : ["id","src"]
     })
 }
+
+/**
+ * 创建商品的图片
+ * @param {*} goodsId 商品的id
+ * @param { String } src 商品图片的路径
+ * @returns 
+ */
+exports.createImgSrc_goods = async function(goodsId,src){
+    return await Img.create({
+        src,
+        goodsId
+    },{
+        attributes : ["id","src"]
+    })
+}
+
+/**
+ * 移除商品的图片
+ * @param {*} id 商品的id
+ */
+exports.removeImgSrc = async function(id){
+    return await Img.destroy({
+        where : {
+            id
+        }
+    })
+}
+
+/**
+ * 根据图片的Id获取图片的信息
+ */
+exports.getImgById = async function(id){
+    return await Img.findByPk(id,{
+        attributes : {
+            exclude : ["createdAt","updatedAt"]
+        }
+    });
+}

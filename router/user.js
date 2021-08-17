@@ -16,9 +16,11 @@ router.post("/login", async (req, res, next) => {
     } = req.body;
     try {
         const userInfo = await userOpt.login(email, password);
-        console.log(userInfo);
         //验证通过则设置令牌
-        const token = setToken(res, userInfo.username);
+        const token = setToken(res, {
+            admin : userInfo.admin,
+            username : userInfo.username
+        });
         res.send({
             status: "success",
             msg: "登录成功",
@@ -128,10 +130,8 @@ function sendEmail(email, msg) {
  * @param { Object } res request对象
  * @param { String } username 用户名，当作payload
  */
-function setToken(res, username) {
-    const token = jwt.sign({
-        username
-    }, {
+function setToken(res, userInfo) {
+    const token = jwt.sign(userInfo, {
         expiresIn: 60 * 60, //一小时后过期
     })
     res.set("authorization", "bearer " + token);

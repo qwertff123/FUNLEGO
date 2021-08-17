@@ -14,6 +14,8 @@ module.exports = function(options){
             const result = jwt.verify(authorization.split(" ")[1]);
             //将username放入到request对象中
             req.username = result.username;
+            req.admin = result.admin;
+            console.log("身份",result)
             next();
         }
     }

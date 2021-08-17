@@ -34,7 +34,8 @@ const Goods = sequelize.define("goods", {
     },
     sales: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true,
+        defaultValue : 0
     },
     // categoryId: {
     //     type: DataTypes.INTEGER,

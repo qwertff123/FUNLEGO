@@ -20,6 +20,10 @@ const User = sequelize.define("user", {
     nickname : {
         type : DataTypes.STRING,
         allowNull : false
+    },
+    admin : {
+        type : DataTypes.BOOLEAN,
+        defaultValue : 0
     }
 });
 

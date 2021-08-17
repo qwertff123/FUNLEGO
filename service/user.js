@@ -17,7 +17,7 @@ exports.login = async function (email, password) {
             email,
             password: md5(password)
         },
-        attributes : ["username","email","nickname"]
+        attributes : ["username","email","nickname","admin"]
     });
     if (!result) {
         throw Error("邮箱或密码错误")
@@ -74,7 +74,7 @@ exports.getInfo = async function(username){
         where : {
             username
         },
-        attributes : ["username","email","nickname"]
+        attributes : ["username","email","nickname","admin"]
     })
 }
 /**

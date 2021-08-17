@@ -12,11 +12,12 @@ const app = express();
 app.use((req,res,next)=>{
     res.set("Access-Control-Allow-Origin","http://127.0.0.1:8080");
     res.set("Access-Control-Allow-Headers",["content-type","authorization"]);
-    res.set('Access-Control-Allow-Methods',["POST","PUT"]);
+    res.set('Access-Control-Allow-Methods',["POST","PUT","DELETE"]);
     res.set("Access-Control-Allow-Credentials",true);
     next();
 });
 
+app.use("/public",express.static("./public"))
 //校验用户身份
 app.use(authorization({
     whiteList : ["/api/login","/api/register","/api/getCode"]
@@ -32,7 +33,13 @@ app.use(session({
     secret : "qwertff"
 }));
 
-
+// app.get("/test",(req,res)=>{
+//     res.set("Set-Cookie","appkey=123456")
+//     res.redirect("http://192.168.1.14:8886/test1")
+// });
+// app.get("/test1",(req,res)=>{
+//     res.send("666")
+// })
 app.use("/api",userRouter);
 app.use("/api",goodsRouter);
 app.use("/api",imgRouter);

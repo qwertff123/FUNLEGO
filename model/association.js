@@ -37,10 +37,7 @@ Img.belongsTo(Goods, {
 
 //一个category对应多个sub_category，一个sub_category对应一个category
 Category.hasMany(subCategory);
-subCategory.belongsTo(Category, {
-    targetKey: "name",
-    foreignKey: "categoryName"
-});
+subCategory.belongsTo(Category);
 
 // 一个goods对应一个sub_category，一个sub_category可以对应多个goods
 Goods.belongsTo(SubCategory);
