@@ -6,22 +6,25 @@
       v-if="type == 'file'"
       @change="handleClick"
     />
-    <button :type="type=='submit' ? 'submit' : 'button'" @click="handleClick">
+    <button :type="type == 'submit' ? 'submit' : 'button'" @click="handleClick">
       {{ label }}
     </button>
   </div>
 </template>
 <script>
 export default {
-  props: ["type", "label", "qwClass", "eventConfig"],
+  props: ["type", "label", "qwClass", "eventConfig","field"],
   methods: {
     handleClick(e) {
       if (this.eventConfig) {
         e.stopPropagation();
-      } 
+      }
       if (this.type == "file") {
-        this.$emit("change", e.target);
-      } else if(this.type == "button"){
+        const formData = new FormData();
+        console.log(this.field);
+        formData.append(this.field, e.target.files[0]);
+        this.$emit("change", formData);
+      } else if (this.type == "button") {
         e.preventDefault();
         this.$emit("click");
       }
@@ -38,8 +41,8 @@ export default {
   overflow: hidden;
 }
 button {
-  background-color:transparent;
-  color:inherit;
+  background-color: transparent;
+  color: inherit;
   font-weight: inherit;
   width: 100%;
   height: 100%;

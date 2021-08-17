@@ -100,7 +100,7 @@ import formComponent from "@/components/formComponent";
 import changePage from "@/components/changePage";
 
 //导入轮播图组件
-import carouselCompinent from "@/components/carouselComponent";
+// import carouselCompinent from "@/components/carouselComponent";
 
 //导入工具库
 import { deepClone, getBase64 } from "@/util";
@@ -124,7 +124,7 @@ export default {
     //向组件实例上注入表单组件
     ...formComponent,
     //向实例上注入轮播图组件
-    ...carouselCompinent,
+    // ...carouselCompinent,
 
     //引入表格组件
     ...tableComponent,

@@ -121,6 +121,7 @@
                   label="添加"
                   class="add"
                   type="file"
+                  field="img"
                   @change="uploadImage"
                   @keypress.native.enter="() => {}"
                 ></qw-button>
@@ -150,18 +151,18 @@
 <script>
 //引入表单组件
 import formComponent from "@/components/formComponent";
-//导入轮播图组件
-import carouselCompinent from "@/components/carouselComponent";
+// //导入轮播图组件
+// import carouselCompinent from "@/components/carouselComponent";
 
 import "@/assets/css/goodsModify.less";
 
 import * as goodsApi from "@/api/goods";
-import { getAllCategoryAndSub, getAllTags, uploadImg } from "@/api/goods";
-import { getBase64 } from "@/util";
+import { getAllCategoryAndSub, getAllTags, uploadImg_goods } from "@/api/goods";
+import { deepClone } from "@/util";
 export default {
   components: {
     ...formComponent,
-    ...carouselCompinent,
+    // ...carouselCompinent,
   },
   props: {
     goodsId: {
@@ -224,16 +225,14 @@ export default {
       this.goods = goodsInfo;
       console.log(this.goods);
     },
-    async uploadImage(el) {
+    async uploadImage(formData) {
       // getBase64(el).then((base64) => {
       //   //生成base64图片在页面中展示
       //   this.goods.images.push({ src: base64 });
       // });
       /* 上传图片到服务中 */
-      const formData = new FormData();
-      formData.append("img", el.files[0]);
       formData.append("goodsId", this.goods.id);
-      const src = (await uploadImg(formData)).data;
+      const src = (await uploadImg_goods(formData)).data;
       this.goods.images.push(src);
     },
     removeImage() {

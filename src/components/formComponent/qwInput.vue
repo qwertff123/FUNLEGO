@@ -1,7 +1,10 @@
 <template>
   <div class="qw-input" :class="vertifyClass">
     <div class="content">
-      <slot></slot>
+      <div class="icon-custom">
+        <slot></slot>
+      </div>
+
       <input
         :type="type == 'password' ? type : 'text'"
         :placeholder="placeholder"
@@ -9,7 +12,7 @@
         @input="$emit('input', $event.target.value)"
         ref="input"
       />
-      <i class="iconfont" :class="['status', vertifyClass]"></i>
+      <i class="iconfont icon-status" :class="['status', vertifyClass]"></i>
     </div>
 
     <div class="error-msg">
@@ -24,18 +27,7 @@ export default {
     prop: "value",
     event: "input",
   },
-  props: {
-    placeholder: {},
-    value: {},
-    prop: {},
-    type: {},
-    icon: {
-      //用于标识该输入框是否有图标
-      type: Boolean,
-      default: false,
-    },
-  },
-
+  props : ["placeholder","value","prop","type"],
   inject: ["totalRules"],
   data() {
     return {
@@ -69,9 +61,6 @@ export default {
     }
   },
   mounted() {
-    if (this.icon) {
-      this.$refs.input.style.paddingLeft = "30px";
-    }
     //用户交互时触发的表单的校验
     this.rules &&
       registerVertifyEvent({
@@ -107,12 +96,13 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 .qw-input {
   position: relative;
-  border: 1px solid #eee;
-  width:100%;
-
+  width: 100px;
+  height: 30px;
+  border:1px solid #eee;
+  box-sizing: border-box;
   &.error {
     border: 1px solid #f56c6c;
 
@@ -131,10 +121,12 @@ export default {
 
   .error-msg {
     position: absolute;
+    left:0;
     bottom: -18px;
     font-size: 12px;
     color: #f56c6c;
     padding-left: 5px;
+    white-space: nowrap;
   }
   .content {
     position: absolute;
@@ -144,6 +136,7 @@ export default {
     right: 0;
     display: flex;
     // width:100%;
+    padding: inherit;
   }
 
   input {
@@ -151,14 +144,24 @@ export default {
     position: absolute;
     top: 0;
     bottom: 0;
-    left:0;
-    right:0;
+    left: 0;
+    right: 0;
     box-sizing: border-box;
     // padding-left: 10px;
-    width:100%;
+    width: 100%;
     text-align: inherit;
+    font-size: inherit;
+    padding: inherit;
+    outline: none;
+    border: none;
   }
-  i {
+  div.icon-custom{
+    position:absolute;
+    top:50%;
+    left:10px;
+    transform: translateY(-50%);
+  }
+  i.icon-status {
     width: 20px;
     height: 20px;
     line-height: 20px;

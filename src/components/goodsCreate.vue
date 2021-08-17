@@ -115,6 +115,7 @@
               label="添加"
               class="add"
               type="file"
+              field="img"
               @change="uploadImage"
               @keypress.native.enter="() => {}"
             ></qw-button>
@@ -181,11 +182,11 @@ import {
   removeImg,
 } from "@/api/goods";
 
-import carouselCompinent from "@/components/carouselComponent";
+// import carouselCompinent from "@/components/carouselComponent";
 export default {
   components: {
     ...formComponent,
-    ...carouselCompinent,
+    // ...carouselCompinent,
   },
   data() {
     return {
@@ -303,14 +304,8 @@ export default {
     back() {
       this.$emit("back");
     },
-    async uploadImage(el) {
-      // getBase64(el).then((base64) => {
-      //   //生成base64图片在页面中展示
-      //   this.goods.images.push({ src: base64 });
-      // });
+    async uploadImage(formData) {
       /* 上传图片到服务中 */
-      const formData = new FormData();
-      formData.append("img", el.files[0]);
       formData.append("goodsId", this.goodsId);
       const src = (await uploadImg(formData)).data;
       const filename = src.src.replace(/.*\//g, "");

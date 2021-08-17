@@ -199,28 +199,15 @@ export function updateCategory(oldCategory,newCategory){
 
 /**
  * 添加商品类别
- * @param {*} option 
+ * @param {*} categoryInfo 
  * @returns 
  */
-export function addCategory(option) {
-    /* eslint-disable */
-    const {
-        appkey,
-        id,
-        name,
-        c_items
-    } = option;
-    console.log(name)
-    return axios({
-        method: "post",
-        url: "/category/add",
-        data: {
-            appkey,
-            id,
-            name,
-            c_items
-        }
-    })
+export function addCategory(categoryInfo) {
+   return axios({
+       method : "post",
+       url : "/api/category",
+       data : categoryInfo
+   })
 }
 
 /**
@@ -244,17 +231,27 @@ export function removeCategory(option) {
 }
 
 /**
- * 上传图片
+ * 上传商品图片
  * @param {*} formData FormData实例对象
  * @returns 
  */
-export function uploadImg(formData){
+export function uploadImg_goods(formData){
     return axios({
         method : "post",
-        url : "/api/img",
+        url : "/api/imgForGoods",
         data : formData
     })
 }
+
+/**
+ * 
+ * @param {*} imgId 
+ * @returns 
+ */
+export function uploadImg_category(){
+    
+}
+
 
 /**
  * 删除图片

@@ -80,50 +80,12 @@ export default {
   },
   methods: {
     addCategory() {
-      if (!this.newCategory) {
-        return;
-      }
-      goodsApi
-        .addCategory({
-          appkey: "qwertff_1618500498552",
-          id: Math.round(Math.random() * 1000000),
-          name: this.newCategory,
-        })
-        .then((data) => {
-          this.categoryInfo.push(data.data.data);
-          this.newCategory = "";
-        });
     },
 
     addSubCategory() {
-      const target = this.categoryInfo[this.categoryIndex];
-      target.c_items.push(this.newSubCategory);
-      goodsApi
-        .editSubCategory({
-          name: target.name,
-          id: target.id,
-          appkey: "qwertff_1618500498552",
-          c_items: target.c_items,
-        })
-        .then((data) => {
-          console.log(data);
-          this.newSubCategory = "";
-        });
     },
 
     removeSubCategory(index) {
-      const target = this.categoryInfo[this.categoryIndex];
-      target.c_items.splice(index, 1);
-      goodsApi
-        .editSubCategory({
-          name: target.name,
-          id: target.id,
-          appkey: "qwertff_1618500498552",
-          c_items: target.c_items,
-        })
-        .then((data) => {
-          console.log(data);
-        });
     },
     editing(e, category) {
       this.freshCategory = category;

@@ -27,23 +27,22 @@ const routes = [{
     },
     {
         path: "/1",
-        redirect: "categoryManage",
+        redirect: "categoryAndTags",
         meta: {
             menu: 1,
         },
         component: () => import("./views/home"),
         children: [{
-            path: "/categoryManage",
-            name: "categoryManage",
+            path: "/categoryAndTags",
+            name: "categoryAndTags",
             meta: {
                 title: "类名与标签",
-                icon: "categoryManage",
+                icon: "categoryAndTags",
                 index: 2,
                 admin: true //需要管理员才能访问
             },
-            component: () => import("./views/categoryManage")
+            component: () => import("./views/categoryAndTags")
         }]
-
     },
     {
         path: "/saleManage",
