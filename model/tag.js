@@ -1,6 +1,6 @@
 const sequelize = require("./sequelize");
 const {
-    DataTypes
+    DataTypes, INTEGER
 } = require("sequelize");
 
 const Tag = sequelize.define("tag",{
@@ -10,7 +10,7 @@ const Tag = sequelize.define("tag",{
         primaryKey : true
     }
 },{
-    timestamps : false
+    updatedAt : false
 });
 
 module.exports = Tag;

@@ -6,8 +6,8 @@ const Category = sequelize.define("category",{
         type : DataTypes.STRING,
         allowNull : false
     },
-    imgSrc : {
-        type : DataTypes.STRING(2000),
+    imgId : {
+        type : DataTypes.INTEGER,
         allowNull : false
     }
 },{

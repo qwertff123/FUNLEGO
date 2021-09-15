@@ -1,8 +1,7 @@
 const Goods = require("../model/goods");
 const Category = require("../model/category");
 const SubCategory = require("../model/sub_category");
-const Tag = require("../model/tag");
-const sequelize = require("../model/sequelize");
+const Img = require("../model/img");
 const Sequelize = require("sequelize");
 const {
     Op
@@ -122,40 +121,58 @@ exports.deleteGoods = async function (username, id) {
 }
 
 /**
- * 根据关键字查询商品列表
- * @param { Object } condition 
+ * 根据goodsId获取相应商品的图片
+ * @param {*} goodsId 商品Id
+ * @returns 
  */
-// exports.findGoodsByKw = async function (keyword, limit, page) {
-//     return await Goods.findAndCountAll({
-//         where: {
-//             title: {
-//                 [Op.like]: "%" + keyword + "%"
-//             }
-//         },
-//         limit,
-//         offset: page
-//     })
-// }
+exports.getGoodsImg = async function (goodsId) {
+    return await Goods.findByPk(goodsId, {
+        include: {
+            model: Img,
+            attributes: ["id", "src"],
+            through: {
+                attributes: []
+            }
+        },
+        attributes: []
+    })
+}
 
-// exports.findByCategory = async function (category, limit, page) {
-//     return await Goods.findAndCountAll({
-//         include: {
-//             model: SubCategory,
-//             attributes: [],
-//             include: {
-//                 model: Category,
-//                 attributes: []
-//             }
-//         },
-//         where: {
-//             "$sub_category.category.name$": category
-//         },
-//         limit,
-//         offet: page
-//     })
-// };
+/**
+ * 添加商品图片
+ * @param {*} goodsId 
+ * @param {*} src 
+ * @returns 
+ */
+exports.addGoodsImg = async function (goodsId, src) {
+    const img = await Img.create({
+        src
+    });
+    const goods = await Goods.findByPk(goodsId);
+    await goods.addImg(img);
+    return img;
+}
 
-exports.filter = async function (username,condition, limit, page) {
+/**
+ * 移除商品图片
+ * @param {*} goodsId 商品Id
+ * @param {*} imgId 图片Id
+ * @returns 
+ */
+exports.removeGoodsImg = async function (goodsId, imgId) {
+    const img = await Img.findByPk(imgId);
+    const goods = await Goods.findByPk(goodsId);
+    console.log("图片Id",imgId)
+    await Img.destroy({
+        where: {
+            id: imgId
+        }
+    });
+    goods.removeImg(img);
+    return img;
+}
+
+exports.filter = async function (username, condition, limit, page) {
     return await Goods.findAndCountAll({
         include: {
             model: SubCategory,

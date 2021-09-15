@@ -15,7 +15,6 @@ module.exports = function(options){
             //将username放入到request对象中
             req.username = result.username;
             req.admin = result.admin;
-            console.log("身份",result)
             next();
         }
     }

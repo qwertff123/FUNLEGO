@@ -1,6 +1,8 @@
 const Tag = require("../model/tag");
 const Goods = require("../model/goods");
-const { Op } = require("sequelize")
+const {
+    Op
+} = require("sequelize")
 
 // exports.getTags = async function(goodsId){
 //     const result = await Tag.findAll({
@@ -20,18 +22,18 @@ const { Op } = require("sequelize")
  * @param {*} goodsId 商品Id
  * @returns 
  */
-exports.getTags = async function(goodsId){
+exports.getTags = async function (goodsId) {
     const result = await Goods.findOne({
-        include : {
-            model : Tag,
-            attributes : ["name"],
-            through : {
-                attributes:[]
+        include: {
+            model: Tag,
+            attributes: ["name"],
+            through: {
+                attributes: []
             }
         },
-        attributes : ["tags.name"],
-        where : {
-            id : goodsId
+        attributes: ["tags.name"],
+        where: {
+            id: goodsId
         }
     });
     return result;
@@ -40,16 +42,42 @@ exports.getTags = async function(goodsId){
 /**
  * 获取所有的标签
  */
-exports.getAllTags = async function(){
-    
-    return await Tag.findAll();
+exports.getAllTags = async function () {
+    return await Tag.findAll({
+        order: [
+            ["createdAt"]
+        ]
+    });
 }
 
+/**
+ * 添加标签
+ * @param {*} name 标签名
+ * @returns 
+ */
+exports.addTag = async function (name) {
+    return await Tag.create({
+        name
+    })
+}
+
+/**
+ * 删除标签名
+ * @param {*} name 标签名
+ * @returns 
+ */
+exports.deleteTag = async function (name) {
+    return await Tag.destroy({
+        where: {
+            name
+        }
+    })
+}
 
 /**
  * 更新商品所对应的标签
  */
-exports.updateGoodsTags = async function(goodsId,tags=["热销"]){
+exports.updateGoodsTags = async function (goodsId, tags = ["热销"]) {
     /* 处理多对多关系的模型的数据修改 */
 
     //1.先获取指定商品的模型实例
@@ -61,9 +89,11 @@ exports.updateGoodsTags = async function(goodsId,tags=["热销"]){
     await goods.removeTags(oldTags);
     //4.通过传入的参数tags找出所有符合要求的tag并组装成一个模型实例
     const tag = await Tag.findAll({
-        where : {
-            [Op.or] : tags.map(tag=>{
-                return { name : tag}
+        where: {
+            [Op.or]: tags.map(tag => {
+                return {
+                    name: tag
+                }
             })
         }
     });
