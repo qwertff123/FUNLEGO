@@ -131,7 +131,7 @@ i {
     content: "\e634";
   }
 
-  &.categoryManage::after {
+  &.categoryAndTags::after {
     content: "\e617";
   }
 }

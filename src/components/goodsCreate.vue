@@ -175,10 +175,10 @@ import formComponent from "@/components/formComponent";
 import "ant-design-vue/dist/antd.css"; // or 'ant-design-vue/dist/antd.less'
 
 import {
-  getAllCategoryAndSub,
+  getAllCategory,
   addGoods,
   getAllTags,
-  uploadImg,
+  addGoodsImg,
   removeImg,
 } from "@/api/goods";
 
@@ -209,7 +209,7 @@ export default {
         price_off: null,
         unit: "个",
         issale: true,
-        images: [],
+        // images: [],
         inventory: "123",
         sales: 0,
       },
@@ -262,20 +262,16 @@ export default {
   },
   async created() {
     window.test = this;
-    const result = (await getAllCategoryAndSub()).data;
+    const result = (await getAllCategory()).data;
     for (const category of result) {
       this.categoryList.push(category.name);
-      this.categoryMap[category.name] = category.subCategories;
+      this.categoryMap[category.name] = category.sub_categories;
     }
-    console.log(this.categoryMap);
     this.subCategoryList = this.categoryMap[this.form2.category];
     this.tagsList = (await getAllTags()).data;
-
-    console.log(this.$carousel);
   },
   watch: {
     "form2.category"() {
-      console.log(this.form2.category);
       this.subCategoryList = this.categoryMap[this.form2.category];
       this.form2.subCategory = this.subCategoryList[0].name;
     },
@@ -286,12 +282,10 @@ export default {
       form.subCategoryId = this.subCategoryList.find((val) => {
         return val.name == this.form2.subCategory;
       }).id;
-      console.log(form);
       const result = await addGoods(form);
       if (result.status == "success") {
         this.$message.success("基本信息添加完毕");
         this.goodsId = result.data;
-        console.log(this.goodsId);
         this.next();
       }
     },
@@ -307,15 +301,15 @@ export default {
     async uploadImage(formData) {
       /* 上传图片到服务中 */
       formData.append("goodsId", this.goodsId);
-      const src = (await uploadImg(formData)).data;
-      const filename = src.src.replace(/.*\//g, "");
+      const img = (await addGoodsImg(formData)).data;
+      const filename = img.src.replace(/.*\//g, "");
       this.$message.success(`${filename} 添加成功`);
-      this.images.push(src);
+      this.images.push(img);
     },
     async removeImage() {
       const filename = this.images[this.curImgIndex].src.replace(/.*\//g, "");
-      const index = this.images.splice(this.curImgIndex, 1)[0];
-      await removeImg(index);
+      const img = this.images.splice(this.curImgIndex, 1)[0];
+      await removeImg(img.id);
       this.$message.success(`${filename} 移除成功`);
     },
   },

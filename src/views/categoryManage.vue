@@ -30,7 +30,7 @@
           <button @click="addCategory">添加</button>
         </div>
       </div>
-      <div class="sub-category" v-if="subCategoryMap[categoryInfo[index].name]">
+      <!-- <div class="sub-category" v-if="subCategoryMap[categoryInfo[index].name]">
         <div class="list">
           <span
             class="item"
@@ -49,7 +49,7 @@
           <input type="text" v-model="newSubCategory" />
           <button @click="addSubCategory">添加</button>
         </div>
-      </div>
+      </div> -->
       <div class="image"></div>
     </div>
   </div>

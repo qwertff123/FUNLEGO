@@ -157,7 +157,6 @@ import formComponent from "@/components/formComponent";
 import "@/assets/css/goodsModify.less";
 
 import * as goodsApi from "@/api/goods";
-import { getAllCategoryAndSub, getAllTags, uploadImg_goods } from "@/api/goods";
 import { deepClone } from "@/util";
 export default {
   components: {
@@ -183,25 +182,21 @@ export default {
       subCategoryList: [],
       categoryMap: null, //类名与其id的映射表
       sliding: false, //轮播图是否处于轮播状态
-      // subCategoryMap: null, //子类目与其id的映射表
-      // originImgs: [], //用于记录原始图片
-      // newImgs: [], //用于记录新添加的图片
-      // rmImgs: [], //用于记录删除的图片
     };
   },
   async created() {
     await this.initGoods();
     this.categoryMap = {};
-    const result = (await getAllCategoryAndSub()).data;
+    const result = (await goodsApi.getAllCategory()).data;
     for (const category of result) {
       this.categoryList.push(category.name);
-      this.categoryMap[category.name] = category.subCategories;
+      this.categoryMap[category.name] = category.sub_categories;
     }
     this.subCategoryList = this.categoryMap[this.goods.category];
 
     this.subCategoryList = this.categoryMap[this.goods.category];
 
-    const tagsList = await getAllTags();
+    const tagsList = await goodsApi.getAllTags();
     this.tagsList = tagsList.data;
   },
   watch: {
@@ -217,22 +212,15 @@ export default {
   methods: {
     async initGoods() {
       const goodsId = this.goodsId;
-      console.log("id", goodsId);
       const goodsInfo = (await goodsApi.getGoodsById(goodsId)).data;
-      goodsInfo.images = (await goodsApi.getImgSrc(goodsId)).data;
+      goodsInfo.images = (await goodsApi.getGoodsImg(goodsId)).data;
       goodsInfo.tags = (await goodsApi.getTags(goodsId)).data;
-
       this.goods = goodsInfo;
-      console.log(this.goods);
     },
     async uploadImage(formData) {
-      // getBase64(el).then((base64) => {
-      //   //生成base64图片在页面中展示
-      //   this.goods.images.push({ src: base64 });
-      // });
       /* 上传图片到服务中 */
       formData.append("goodsId", this.goods.id);
-      const src = (await uploadImg_goods(formData)).data;
+      const src = (await goodsApi.addGoodsImg(formData)).data;
       this.goods.images.push(src);
     },
     removeImage() {
@@ -240,8 +228,8 @@ export default {
         //轮播图处于滑动状态，不移除图片
         return;
       }
-      const index = this.goods.images.splice(this.curImgIndex, 1)[0];
-      goodsApi.removeImg(index);
+      const imgId = this.goods.images.splice(this.curImgIndex, 1)[0].id;
+      goodsApi.removeImg(imgId);
     },
     updateIndex(index) {
       this.curImgIndex = index;
@@ -250,7 +238,6 @@ export default {
     resetForm() {
       //图片不做重置处理
       this.formCache.images = this.goods.images;
-
       this.goods = deepClone(this.formCache);
     },
     submit() {
@@ -258,8 +245,6 @@ export default {
       this.goods.subCategoryId = this.subCategoryList.find((val) => {
         return val.name == this.goods.subCategory;
       }).id;
-      console.log(this.goods);
-      // this.diffImgs();
       this.$emit("submit", this.goods);
     },
     back() {

@@ -7,8 +7,8 @@
       </qw-label>
       <qw-label label="商品类别" class="condition-box">
         <qw-select placeholder="请选择相应种类" v-model="condition.category">
-          <qw-option v-for="item in categoryList" :value="item" :key="item">{{
-            item
+          <qw-option v-for="item in categoryList" :value="item.name" :key="item.id">{{
+            item.name
           }}</qw-option>
         </qw-select>
       </qw-label>
@@ -158,7 +158,12 @@ export default {
   methods: {
     //用于初始化所需要的数据
     async initData() {
-      const result = await goodsApi.getGoodsList(this.curPage, this.maxAmount);
+      // const result = await goodsApi.getGoodsList(this.curPage, this.maxAmount);
+      const result = await goodsApi.getFilterGoods(
+        this.curCondition,
+        this.maxAmount,
+        this.curPage
+      );
       this.goodsList = result.data.rows;
       this.pageSize = Math.ceil(result.data.count / this.maxAmount);
 

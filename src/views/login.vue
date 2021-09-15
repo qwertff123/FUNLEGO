@@ -184,7 +184,7 @@ export default {
       status: "login",
       form: {
         username: "",
-        email: "",
+        email: "1648494263@qq.com",
         password: "1648494263",
         passwordConfirm: "",
         code: "",

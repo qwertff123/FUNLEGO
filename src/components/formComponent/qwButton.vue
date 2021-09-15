@@ -13,7 +13,31 @@
 </template>
 <script>
 export default {
-  props: ["type", "label", "qwClass", "eventConfig","field"],
+  data(){
+    return { 
+      errorMsg : ""
+    }
+  },
+  props: ["type", "label", "qwClass", "eventConfig", "field","prop"],
+  mounted() {
+    if(this.type != "file"){
+      return;
+    }
+    this.$formBus.$on("submitVertify", (vertifyError) => {
+      const result = vertifyError
+        .filter((val) => {
+          return val.prop == this.prop;
+        })
+        .pop();
+        console.log(result);
+      if (result) {
+        this.errorMsg = result.msg;
+        alert(this.errorMsg);
+      } else {
+        this.errorMsg = "";
+      }
+    });
+  },
   methods: {
     handleClick(e) {
       if (this.eventConfig) {
@@ -21,7 +45,6 @@ export default {
       }
       if (this.type == "file") {
         const formData = new FormData();
-        console.log(this.field);
         formData.append(this.field, e.target.files[0]);
         this.$emit("change", formData);
       } else if (this.type == "button") {

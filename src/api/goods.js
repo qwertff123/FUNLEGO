@@ -4,8 +4,8 @@ import axios from "../axios";
  * 得到请求过来的商品数据
  * @return promise对象
  */
-export function getGoodsList(page=1,limit=5) {
-    
+export function getGoodsList(page = 1, limit = 5) {
+
     return axios({
         methods: "get",
         url: "/api/goods",
@@ -46,11 +46,11 @@ export function getGoodsById(goodsId) {
 //     })
 // }
 
-export function getFilterGoods(condition,limit = 5,page = 1){
+export function getFilterGoods(condition, limit = 5, page = 1) {
     return axios({
-        method : "get",
-        url : "/api/goods/filter",
-        params : {
+        method: "get",
+        url: "/api/goods/filter",
+        params: {
             condition,
             limit,
             page
@@ -63,13 +63,10 @@ export function getFilterGoods(condition,limit = 5,page = 1){
  * @param {*} id 
  * @returns 
  */
-export function getImgSrc(goodsId){
+export function getGoodsImg(goodsId) {
     return axios({
-        method : "get",
-        url : "/api/img",
-        params : {
-            goodsId
-        }
+        method: "get",
+        url: "/api/goods/image/" + goodsId,
     })
 }
 
@@ -77,11 +74,11 @@ export function getImgSrc(goodsId){
  * 根据商品Id获取商品标签
  * @param {*} goodsId 
  */
-export function getTags(goodsId){
+export function getTags(goodsId) {
     return axios({
-        method : "get",
-        url : "/api/getTags",
-        params : {
+        method: "get",
+        url: "/api/getTags",
+        params: {
             goodsId
         }
     })
@@ -90,10 +87,20 @@ export function getTags(goodsId){
 /**
  * 获取所有的商品标签
  */
-export function getAllTags(){
+export function getAllTags() {
     return axios({
-        method : "get",
-        url : "/api/getAllTags"
+        method: "get",
+        url: "/api/getAllTags"
+    })
+}
+
+export function addTag(name) {
+    return axios({
+        method: "post",
+        url: "/api/tag",
+        data: {
+            name
+        }
     })
 }
 
@@ -101,28 +108,28 @@ export function getAllTags(){
  * 获取商品的所有类别
  * @returns 
  */
-export function getAllCategory(){
+export function getAllCategory() {
     return axios({
-        method : "get",
-        url : "/api/category"
+        method: "get",
+        url: "/api/category"
     })
 }
 
-export function getAllCategoryAndSub(){
-    return axios({
-        method : "get",
-        url : "/api/getAllCategoryAndSub"
-    })
-}
+// export function getAllCategoryAndSub(){
+//     return axios({
+//         method : "get",
+//         url : "/api/getAllCategoryAndSub"
+//     })
+// }
 /**
  * 获取商品的所有子类
  * @param {*} category 商品类别
  */
-export function getSubCategory(category){
+export function getSubCategory(category) {
     return axios({
-        method : "get",
+        method: "get",
         url: "/api/getSubCategory",
-        params : {
+        params: {
             category
         }
     })
@@ -135,10 +142,7 @@ export function getSubCategory(category){
 export function removeGoods(id) {
     return axios({
         method: "delete",
-        url: "/products/" + id,
-        params: {
-            appkey: "qwertff_1616028685554",
-        },
+        url: "/api/goods/" + id
     })
 }
 
@@ -186,13 +190,13 @@ export function updateGoods(data) {
  * @param {*} categoryId 类Id
  * @param {*} category 类名
  */
-export function updateCategory(oldCategory,newCategory){
+export function updateCategory(id, categoryInfo) {
     return axios({
-        method : "put",
-        url : "/api/category",
-        data : {
-            oldCategory,
-            newCategory
+        method: "put",
+        url: "/api/category",
+        data: {
+            id,
+            ...categoryInfo
         }
     })
 }
@@ -203,11 +207,11 @@ export function updateCategory(oldCategory,newCategory){
  * @returns 
  */
 export function addCategory(categoryInfo) {
-   return axios({
-       method : "post",
-       url : "/api/category",
-       data : categoryInfo
-   })
+    return axios({
+        method: "post",
+        url: "/api/category",
+        data: categoryInfo
+    })
 }
 
 /**
@@ -215,16 +219,31 @@ export function addCategory(categoryInfo) {
  * @param {*} option 
  * @returns 
  */
-export function removeCategory(option) {
-    const {
-        appkey,
-        id = Math.round(Math.random() * 1000000),
-    } = option;
+// export function removeCategory(option) {
+//     const {
+//         appkey,
+//         id = Math.round(Math.random() * 1000000),
+//     } = option;
+//     return axios({
+//         method: "delete",
+//         url: "/category/" + id,
+//         data: {
+//             appkey,
+//             id
+//         }
+//     })
+// }
+
+/**
+ * 移除子类
+ * @param {*} id 子类id
+ * @returns 
+ */
+export function removeSubCategory(id) {
     return axios({
         method: "delete",
-        url: "/category/" + id,
+        url: "/api/subCategory",
         data: {
-            appkey,
             id
         }
     })
@@ -235,52 +254,61 @@ export function removeCategory(option) {
  * @param {*} formData FormData实例对象
  * @returns 
  */
-export function uploadImg_goods(formData){
+export function addGoodsImg(formData) {
     return axios({
-        method : "post",
-        url : "/api/imgForGoods",
-        data : formData
+        method: "post",
+        url: "/api/goods/image",
+        data: formData
     })
 }
 
+
 /**
- * 
+ * 删除商品图片
+ * @param {*} goodsId
  * @param {*} imgId 
  * @returns 
  */
-export function uploadImg_category(){
-    
-}
-
-
-/**
- * 删除图片
- * @param {*} imgId 图片Id
- * @returns 
- */
-export function removeImg(imgId){
+export function removeGoodsImg(goodsId, imgId) {
     return axios({
-        method : "delete",
-        url : "/api/img",
-        data : imgId
+        method: "delete",
+        url: "/api/goods/image",
+        data: {
+            goodsId,
+            imgId
+        }
     })
 }
 
-export function editSubCategory(option) {
-    const {
-        appkey,
-        id,
-        name,
-        c_items
-    } = option;
+/**
+ * 上传图片
+ * @param {*} formData 
+ * @returns 
+ */
+export function uploadImg(formData) {
     return axios({
-        method: "put",
-        url: "/category/edit",
+        method: "post",
+        url: "/api/image",
+        data: formData
+    })
+}
+
+export function removeImg(id) {
+    return axios({
+        method: "delete",
+        url: "/api/image",
         data: {
-            appkey,
-            id,
-            name,
-            c_items
+            id
+        }
+    })
+}
+
+export function deleteTag(name) {
+    return axios({
+        method: "delete",
+        url: "/api/tag",
+        data: {
+            name
         }
     })
 }

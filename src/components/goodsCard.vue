@@ -78,7 +78,7 @@ export default {
   async created() {
     const goodsId = this.goodsId;
     const goodsInfo = (await goodsApi.getGoodsById(goodsId)).data;
-    goodsInfo.images = (await goodsApi.getImgSrc(goodsId)).data;
+    goodsInfo.images = (await goodsApi.getGoodsImg(goodsId)).data;
     goodsInfo.tags = (await goodsApi.getTags(goodsId)).data;
     //向商品信息分别注入图片链接与标签名
     this.goods = goodsInfo;
